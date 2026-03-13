@@ -190,12 +190,12 @@
                     const card = `
                         <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'}">
                             <div class="party-info">
-                                <span style="background:rgba(255,255,255,0.1); padding:5px 12px; border-radius:6px; margin-right:15px; font-weight:bold; color:var(--community-blue);">
-                                    ${p.time} 
+                                <span style="background:rgba(241, 196, 15, 0.1); padding:5px 12px; border-radius:6px; margin-right:15px; font-weight:bold; color:#f1c40f; border: 1px solid #f1c40f;">
+                                    ${p.time.split('T')[0].includes('1899') ? p.time.split('T')[1].substring(0,5) : p.time}
                                 </span>
                                 <div style="display:inline-block; vertical-align:middle;">
-                                    <strong style="font-size: 1.2rem; color: #fff;">${p.title}</strong>
-                                    <small style="display: block; color: #888;">Host: ${p.host}</small>
+                                    <strong style="font-size: 1.2rem; color: #fff; display:block;">${p.title}</strong>
+                                    <small style="color: #f1c40f; opacity: 0.8;">Host: ${p.host}</small>
                                 </div>
                             </div>
                             <a href="${p.link}" target="_blank" class="btn-join">JOIN ROOM</a>
