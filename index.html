@@ -303,6 +303,16 @@
         }
 
         async function submitParty() {
+            const btn = document.querySelector('.btn-post');
+            
+            // PREVENT DOUBLE CLICK: If already posting, stop here
+            if (btn.disabled) return;
+
+            // Update button appearance
+            btn.innerText = "POSTING... PLEASE WAIT";
+            btn.style.opacity = "0.5";
+            btn.disabled = true;
+
             const payload = {
                 category: document.getElementById('fCategory').value,
                 title: document.getElementById('fTitle').value,
@@ -311,8 +321,22 @@
                 time: document.getElementById('fTime').value,
                 link: document.getElementById('fLink').value
             };
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("Submitted!"); location.reload();
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload)
+                });
+
+                alert("Party Submitted! It will appear shortly.");
+                location.reload(); // Refresh to show the new party
+            } catch (err) {
+                alert("Something went wrong. Please try again.");
+                btn.innerText = "POST TO CALENDAR";
+                btn.style.opacity = "1";
+                btn.disabled = false;
+            }
         }
         loadParties();
     </script>
