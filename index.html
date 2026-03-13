@@ -34,19 +34,17 @@
             background-color: #000;
         }
 
-        /* BANNER PHOTO LAYER */
         .header-bg {
             position: absolute; 
             top: 0; left: 0; 
             width: 100%; height: 100%; 
-            background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/main/IMVU%20Party.png'); /* PASTE YOUR PHOTO LINK HERE */
+            background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/main/IMVU%20Party.png');
             background-size: cover; 
             background-position: center; 
             z-index: 1; 
             opacity: 0.7;
         }
 
-        /* DARK SHADOW OVER PHOTO */
         .header-overlay {
             position: absolute; 
             top: 0; left: 0; 
@@ -55,7 +53,6 @@
             z-index: 2;
         }
 
-        /* TEXT LAYER */
         .header-content {
             position: relative; 
             z-index: 3; 
@@ -82,12 +79,29 @@
 
         .btn-submit:hover { transform: scale(1.05); filter: brightness(1.1); }
 
-        .lane-title { 
-            margin-top: 40px; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;
-            padding: 10px; border-bottom: 1px solid #333; font-weight: bold;
+        /* TAB STYLES */
+        .category-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; padding: 0 5px;
         }
-        .official-lane-title { color: var(--vui-gold); }
-        .community-lane-title { color: var(--community-blue); }
+
+        .tab-btn {
+            flex: 1;
+            background: #1a1a1a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: rgba(241, 196, 15, 0.1);
+            color: var(--vui-gold);
+            border-color: var(--vui-gold);
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.2);
+        }
 
         .party-list { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
 
@@ -111,65 +125,27 @@
 
         /* MOBILE STYLES */
         @media (max-width: 768px) {
-            /* Shrink the header image area slightly */
-            header { 
-                height: 160px !important; 
-                padding-bottom: 10px !important;
-            }
+            header { height: 160px !important; padding-bottom: 10px !important; }
             header h1 { font-size: 1.2rem !important; margin-bottom: 5px !important; }
-            
-            .header-content {
-                flex-direction: column !important;
-                padding: 0 10px 10px 10px !important;
-            }
+            .header-content { flex-direction: column !important; padding: 0 10px 10px 10px !important; }
             .header-controls { flex-direction: row !important; gap: 10px !important; }
             .clock { font-size: 1rem !important; }
-        
-            /* THE CARD FIX: Horizontal and Compact */
             .party-card {
-                flex-direction: row !important; /* Items stay side-by-side */
+                flex-direction: row !important;
                 padding: 10px !important;
                 gap: 8px !important;
                 text-align: left !important;
                 align-items: center !important;
                 justify-content: space-between !important;
             }
-        
-            /* Wrap the Info (Time box + Title/Host) */
-            .party-info { 
-                flex-direction: row !important; 
-                gap: 10px !important;
-                align-items: center !important;
-            }
-        
-            /* Shrink the Gold "When" Box */
-            div[style*="min-width:90px"] {
-                min-width: 60px !important;
-                padding: 4px !important;
-                margin-right: 8px !important;
-            }
-        
-            /* Scaling down all text */
-            .party-card strong { font-size: 0.95rem !important; line-height: 1.1; }
+            .party-info { flex-direction: row !important; gap: 10px !important; align-items: center !important; }
+            div[style*="min-width:90px"] { min-width: 60px !important; padding: 4px !important; margin-right: 8px !important; }
+            .party-card strong { font-size: 0.95rem !important; line-height: 1.1; display: flex; align-items: center; flex-wrap: wrap; }
             .party-card small { font-size: 0.75rem !important; }
-            div[style*="font-size:0.9rem"] { font-size: 0.65rem !important; } /* Time text */
-            div[style*="font-size:1.1rem"] { font-size: 0.85rem !important; } /* Date text */
-        
-            /* Compact Button */
-            .btn-join {
-                min-width: 85px !important;
-                padding: 6px 10px !important;
-                font-size: 0.75rem !important;
-            }
-        
-            .live-badge {
-                font-size: 0.55rem !important;
-                padding: 1px 3px !important;
-                margin-left: 5px !important;
-            }
+            .btn-join { min-width: 85px !important; padding: 6px 10px !important; font-size: 0.75rem !important; }
+            .live-badge { font-size: 0.55rem !important; padding: 1px 3px !important; margin-left: 5px !important; }
         }
 
-        /* LIVE NOW EFFECTS */
         @keyframes pulse-gold {
             0% { box-shadow: 0 0 5px rgba(241, 196, 15, 0.2); }
             50% { box-shadow: 0 0 20px rgba(241, 196, 15, 0.6); border-color: var(--vui-gold); }
@@ -182,17 +158,10 @@
         }
 
         .live-badge {
-            background: #ff0000;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-left: 10px;
-            vertical-align: middle;
+            background: #ff0000; color: white; font-size: 0.7rem; padding: 2px 8px;
+            border-radius: 4px; font-weight: bold; margin-left: 10px; vertical-align: middle;
         }
 
-        /* Modal Styles */
         .modal {
             display:none; position:fixed; top:0; left:0; width:100%; height:100%;
             background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;
@@ -229,11 +198,18 @@
         This is a community-run party schedule created to help players organize events. This website is not affiliated with, endorsed by, or an official product of IMVU Inc.
     </div>   
 
-    <div class="lane-title official-lane-title">Official IMVU Events ✨</div>
-    <div id="officialList" class="party-list"></div>
+    <div class="category-tabs">
+        <button id="tabOfficial" class="tab-btn active" onclick="switchTab('Official')">Official IMVU Events ✨</button>
+        <button id="tabCommunity" class="tab-btn" onclick="switchTab('Community')">Community Parties 🎧</button>
+    </div>
 
-    <div class="lane-title community-lane-title">Community Parties 🎧</div>
-    <div id="communityList" class="party-list"></div>
+    <div id="officialLane">
+        <div id="officialList" class="party-list"></div>
+    </div>
+
+    <div id="communityLane" style="display: none;">
+        <div id="communityList" class="party-list"></div>
+    </div>
 
     <div id="modalOverlay" class="modal">
         <div class="modal-content">
@@ -276,6 +252,13 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        function switchTab(cat) {
+            document.getElementById('officialLane').style.display = (cat === 'Official') ? 'block' : 'none';
+            document.getElementById('communityLane').style.display = (cat === 'Community') ? 'block' : 'none';
+            document.getElementById('tabOfficial').classList.toggle('active', cat === 'Official');
+            document.getElementById('tabCommunity').classList.toggle('active', cat === 'Community');
+        }
+
         function toggleModal() {
             const m = document.getElementById('modalOverlay');
             const isOpening = (m.style.display === 'none' || m.style.display === '');
@@ -289,7 +272,6 @@
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
-                
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = "";
@@ -308,13 +290,13 @@
 
                     const card = `
                         <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}">
-                            <div class="party-info" style="display: flex; align-items: center;">
+                            <div class="party-info">
                                 <div style="background:rgba(241, 196, 15, 0.05); padding:10px; border-radius:10px; border: 1px solid #f1c40f; min-width:90px; text-align:center; margin-right:20px;">
                                     <div style="color:#f1c40f; font-weight:bold; font-size:0.9rem; margin-bottom:4px;">${p.time}</div>
                                     <div style="color:#fff; font-weight:900; font-size:1.1rem; letter-spacing:0.5px; border-top:1px solid rgba(241,196,15,0.3); padding-top:4px; margin-top:4px;">${p.date}</div>
                                 </div>
                                 <div>
-                                    <strong style="font-size: 1.3rem; color: #fff; display:block; margin-bottom:2px;">
+                                    <strong style="color: #fff;">
                                         ${p.title} ${isLive ? '<span class="live-badge">LIVE NOW</span>' : ''}
                                     </strong>
                                     <small style="color: #f1c40f; opacity: 0.9; font-size:0.95rem;">Host: ${p.host}</small>
@@ -326,9 +308,7 @@
                     if (p.category === 'Official') offDiv.innerHTML += card;
                     else comDiv.innerHTML += card;
                 });
-            } catch (err) {
-                console.log("Waiting for data...");
-            }
+            } catch (err) { console.log("Waiting for data..."); }
         }
 
         async function submitParty() {
@@ -351,7 +331,7 @@
                 body: JSON.stringify(payload)
             });
 
-            alert("Party Submitted! It will appear shortly.");
+            alert("Party Submitted!");
             location.reload();
         }
 
