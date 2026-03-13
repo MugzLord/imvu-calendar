@@ -239,7 +239,6 @@
                     const response = await fetch(API_URL);
                     let data = await response.json();
     
-                    // Auto-Arrange: Sort by Date/Time
                     data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
     
                     const offDiv = document.getElementById('officialList');
@@ -253,15 +252,12 @@
                     data.forEach(p => {
                         const eventTime = new Date(p.date + "-2026 " + p.time);
                         const midnightPT = new Date(p.date + "-2026 11:59:59 PM");
-    
-                        // Hide events after midnight PT
                         if (ptNow > midnightPT) return; 
     
                         const isPast = ptNow > eventTime;
                         const currentHourStr = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
                         const isLive = (currentHourStr === p.time.replace(':00', '')) && !isPast;
     
-                        // Google Calendar Link
                         let calLink = "";
                         if(!isPast) {
                             try {
@@ -320,32 +316,34 @@
                     submissionID: myID
                 };
     
-                // This ensures the key is locked into the browser immediately
-                let currentKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
-                if (!currentKeys.includes(myID)) {
-                    currentKeys.push(myID);
-                    localStorage.setItem('vui_keys', JSON.stringify(currentKeys));
-                }
-                
-                // No scary popups or IDs shown—just a simple reload
-                location.reload();
+                try {
+                    await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                    
+                    let currentKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
+                    if (!currentKeys.includes(myID)) {
+                        currentKeys.push(myID);
+                        localStorage.setItem('vui_keys', JSON.stringify(currentKeys));
+                    }
+                    location.reload();
                 } catch (err) {
                     alert("Error submitting.");
                     btn.disabled = false;
+                    btn.innerText = "POST PARTY";
                 }
             }
-
+    
             function toggleChat() {
                 const box = document.getElementById('chatBox');
                 const txt = document.getElementById('btnChatText');
-                if (box.style.display === 'none' || box.style.display === '') {
+                if (box && (box.style.display === 'none' || box.style.display === '')) {
                     box.style.display = 'flex';
                     txt.innerText = 'Close';
-                } else {
+                } else if (box) {
                     box.style.display = 'none';
                     txt.innerText = 'Edit Help';
                 }
             }
+    
             loadParties();
         </script>
 
