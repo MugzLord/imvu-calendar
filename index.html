@@ -81,7 +81,7 @@
 
         /* TAB STYLES */
         .category-tabs {
-            display: flex; gap: 10px; margin-bottom: 20px; padding: 0 5px;
+            display: flex; gap: 10px; margin-bottom: 25px; padding: 0 5px;
         }
 
         .tab-btn {
@@ -89,11 +89,12 @@
             background: #1a1a1a;
             color: #888;
             border: 1px solid #333;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            font-size: 1rem;
         }
 
         .tab-btn.active {
@@ -103,10 +104,11 @@
             box-shadow: 0 0 15px rgba(241, 196, 15, 0.2);
         }
 
-        .party-list { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+        /* PARTY CARD STYLES - RESTORED NEATNESS */
+        .party-list { display: flex; flex-direction: column; gap: 20px; }
 
         .party-card { 
-            background: var(--card-bg); padding: 20px; border-radius: 12px; 
+            background: var(--card-bg); padding: 25px; border-radius: 15px; 
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid #222; position: relative;
         }
@@ -114,36 +116,30 @@
         .official-card { border-left: 6px solid var(--vui-gold); }
         .community-card { border-left: 6px solid var(--community-blue); }
 
+        .party-info { display: flex; align-items: center; }
+
         .btn-join { 
-            min-width: 120px;
+            min-width: 140px;
             text-align: center;
             background: var(--vui-purple); color: white; border: none; 
-            padding: 10px 20px; border-radius: 8px; text-decoration: none; 
+            padding: 12px 24px; border-radius: 10px; text-decoration: none; 
             font-weight: bold; transition: 0.2s; cursor: pointer;
+            font-size: 1.1rem;
         }
-        .btn-join:hover:not([disabled]) { background: #9b59b6; }
+        .btn-join:hover:not([disabled]) { background: #9b59b6; transform: scale(1.02); }
 
-        /* MOBILE STYLES */
+        /* MOBILE NEATNESS RESTORED */
         @media (max-width: 768px) {
-            header { height: 160px !important; padding-bottom: 10px !important; }
-            header h1 { font-size: 1.2rem !important; margin-bottom: 5px !important; }
-            .header-content { flex-direction: column !important; padding: 0 10px 10px 10px !important; }
-            .header-controls { flex-direction: row !important; gap: 10px !important; }
-            .clock { font-size: 1rem !important; }
-            .party-card {
-                flex-direction: row !important;
-                padding: 10px !important;
-                gap: 8px !important;
-                text-align: left !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-            }
-            .party-info { flex-direction: row !important; gap: 10px !important; align-items: center !important; }
-            div[style*="min-width:90px"] { min-width: 60px !important; padding: 4px !important; margin-right: 8px !important; }
-            .party-card strong { font-size: 0.95rem !important; line-height: 1.1; display: flex; align-items: center; flex-wrap: wrap; }
-            .party-card small { font-size: 0.75rem !important; }
-            .btn-join { min-width: 85px !important; padding: 6px 10px !important; font-size: 0.75rem !important; }
-            .live-badge { font-size: 0.55rem !important; padding: 1px 3px !important; margin-left: 5px !important; }
+            header { height: 160px !important; }
+            .header-content { flex-direction: column !important; gap: 10px; padding-bottom: 15px !important; }
+            .header-controls { flex-direction: row !important; }
+            
+            .party-card { flex-direction: column !important; text-align: center; gap: 20px; padding: 20px !important; }
+            .party-info { flex-direction: column !important; gap: 15px; }
+            
+            div[style*="min-width:90px"] { margin-right: 0 !important; }
+            
+            .btn-join { width: 100%; box-sizing: border-box; }
         }
 
         @keyframes pulse-gold {
@@ -158,8 +154,8 @@
         }
 
         .live-badge {
-            background: #ff0000; color: white; font-size: 0.7rem; padding: 2px 8px;
-            border-radius: 4px; font-weight: bold; margin-left: 10px; vertical-align: middle;
+            background: #ff0000; color: white; font-size: 0.75rem; padding: 3px 10px;
+            border-radius: 5px; font-weight: bold; margin-left: 10px; vertical-align: middle;
         }
 
         .modal {
@@ -194,12 +190,12 @@
         </div>
     </header>
 
-    <div style="font-size: 0.7rem; color: #666; text-align: center; margin-top: 5px; margin-bottom: 25px; font-style: italic; opacity: 0.8;">
-        This is a community-run party schedule created to help players organize events. This website is not affiliated with, endorsed by, or an official product of IMVU Inc.
+    <div style="font-size: 0.75rem; color: #666; text-align: center; margin-bottom: 25px; font-style: italic; opacity: 0.8;">
+        This is a community-run party schedule. Not an official product of IMVU Inc.
     </div>   
 
     <div class="category-tabs">
-        <button id="tabOfficial" class="tab-btn active" onclick="switchTab('Official')">Official IMVU Events ✨</button>
+        <button id="tabOfficial" class="tab-btn active" onclick="switchTab('Official')">Official VUI Events ✨</button>
         <button id="tabCommunity" class="tab-btn" onclick="switchTab('Community')">Community Parties 🎧</button>
     </div>
 
@@ -222,18 +218,18 @@
             <input type="text" id="fHost" placeholder="Host Name">
             <input type="date" id="fDate">
             <select id="fTime">
-                <option value="12 AM">12:00 AM PT</option><option value="1 AM">1:00 AM PT</option>
-                <option value="2 AM">2:00 AM PT</option><option value="3 AM">3:00 AM PT</option>
-                <option value="4 AM">4:00 AM PT</option><option value="5 AM">5:00 AM PT</option>
-                <option value="6 AM">6:00 AM PT</option><option value="7 AM">7:00 AM PT</option>
-                <option value="8 AM">8:00 AM PT</option><option value="9 AM">9:00 AM PT</option>
-                <option value="10 AM">10:00 AM PT</option><option value="11 AM">11:00 AM PT</option>
-                <option value="12 PM">12:00 PM PT</option><option value="1 PM">1:00 PM PT</option>
-                <option value="2 PM">2:00 PM PT</option><option value="3 PM">3:00 PM PT</option>
-                <option value="4 PM">4:00 PM PT</option><option value="5 PM">5:00 PM PT</option>
-                <option value="6 PM">6:00 PM PT</option><option value="7 PM">7:00 PM PT</option>
-                <option value="8 PM">8:00 PM PT</option><option value="9 PM">9:00 PM PT</option>
-                <option value="10 PM">10:00 PM PT</option><option value="11 PM">11:00 PM PT</option>
+                <option value="12 AM">12:00 AM</option><option value="1 AM">1:00 AM</option>
+                <option value="2 AM">2:00 AM</option><option value="3 AM">3:00 AM</option>
+                <option value="4 AM">4:00 AM</option><option value="5 AM">5:00 AM</option>
+                <option value="6 AM">6:00 AM</option><option value="7 AM">7:00 AM</option>
+                <option value="8 AM">8:00 AM</option><option value="9 AM">9:00 AM</option>
+                <option value="10 AM">10:00 AM</option><option value="11 AM">11:00 AM</option>
+                <option value="12 PM">12:00 PM</option><option value="1 PM">1:00 PM</option>
+                <option value="2 PM">2:00 PM</option><option value="3 PM">3:00 PM</option>
+                <option value="4 PM">4:00 PM</option><option value="5 PM">5:00 PM</option>
+                <option value="6 PM">6:00 PM</option><option value="7 PM">7:00 PM</option>
+                <option value="8 PM">8:00 PM</option><option value="9 PM">9:00 PM</option>
+                <option value="10 PM">10:00 PM</option><option value="11 PM">11:00 PM</option>
             </select>
             <input type="text" id="fLink" placeholder="IMVU Room Link">
             <button class="btn-post" onclick="submitParty()">POST TO CALENDAR</button>
@@ -261,11 +257,7 @@
 
         function toggleModal() {
             const m = document.getElementById('modalOverlay');
-            const isOpening = (m.style.display === 'none' || m.style.display === '');
-            m.style.display = isOpening ? 'flex' : 'none';
-            if (isOpening) {
-                document.getElementById('fDate').value = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Los_Angeles'});
-            }
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
         async function loadParties() {
@@ -280,8 +272,7 @@
                 data.forEach(p => {
                     const now = new Date();
                     const currentHour = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', hour12: true });
-                    const partyHour = p.time.replace(':00', ''); 
-                    const isLive = (currentHour === partyHour);
+                    const isLive = (currentHour === p.time.replace(':00', ''));
 
                     const hasLink = p.link && p.link.trim() !== "";
                     const joinBtn = hasLink 
@@ -291,15 +282,15 @@
                     const card = `
                         <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}">
                             <div class="party-info">
-                                <div style="background:rgba(241, 196, 15, 0.05); padding:10px; border-radius:10px; border: 1px solid #f1c40f; min-width:90px; text-align:center; margin-right:20px;">
-                                    <div style="color:#f1c40f; font-weight:bold; font-size:0.9rem; margin-bottom:4px;">${p.time}</div>
-                                    <div style="color:#fff; font-weight:900; font-size:1.1rem; letter-spacing:0.5px; border-top:1px solid rgba(241,196,15,0.3); padding-top:4px; margin-top:4px;">${p.date}</div>
+                                <div style="background:rgba(241, 196, 15, 0.05); padding:15px; border-radius:12px; border: 1px solid #f1c40f; min-width:95px; text-align:center; margin-right:30px;">
+                                    <div style="color:#f1c40f; font-weight:bold; font-size:1rem; margin-bottom:6px;">${p.time}</div>
+                                    <div style="color:#fff; font-weight:900; font-size:1.3rem; letter-spacing:1px; border-top:1px solid rgba(241,196,15,0.3); padding-top:6px; margin-top:6px;">${p.date}</div>
                                 </div>
                                 <div>
-                                    <strong style="color: #fff;">
+                                    <strong style="font-size: 1.5rem; color: #fff; display:block; margin-bottom:4px;">
                                         ${p.title} ${isLive ? '<span class="live-badge">LIVE NOW</span>' : ''}
                                     </strong>
-                                    <small style="color: #f1c40f; opacity: 0.9; font-size:0.95rem;">Host: ${p.host}</small>
+                                    <small style="color: #f1c40f; opacity: 0.9; font-size:1.1rem;">Host: ${p.host}</small>
                                 </div>
                             </div>
                             ${joinBtn}
@@ -312,10 +303,6 @@
         }
 
         async function submitParty() {
-            const btn = document.querySelector('.btn-post');
-            btn.innerText = "POSTING...";
-            btn.disabled = true;
-
             const payload = {
                 category: document.getElementById('fCategory').value,
                 title: document.getElementById('fTitle').value,
@@ -324,13 +311,7 @@
                 time: document.getElementById('fTime').value,
                 link: document.getElementById('fLink').value
             };
-
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(payload)
-            });
-
+            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             alert("Party Submitted!");
             location.reload();
         }
