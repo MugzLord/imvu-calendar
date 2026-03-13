@@ -88,41 +88,51 @@
         }
 
         /* --- MOBILE HYBRID FIX --- */
-        @media (max-width: 768px) {
-            header { height: 140px; }
-            .header-content { flex-direction: column; padding-bottom: 10px; gap: 5px; }
-            header h1 { font-size: 1.2rem; }
-            .clock { font-size: 1.1rem; }
-            
-            .party-card { 
-                flex-direction: row !important; /* Keep items side-by-side */
-                padding: 10px 12px !important; 
-                gap: 8px !important;
-            }
-            .party-info { gap: 10px !important; }
+@media (max-width: 768px) {
+    /* Header adjustments */
+    header { height: 160px !important; }
+    header h1 { font-size: 1.3rem !important; }
+    
+    /* THE CARD FIX: Horizontal and Compact */
+    .party-card {
+        flex-direction: row !important; /* Keep items side-by-side */
+        padding: 12px !important;
+        gap: 10px !important;
+        text-align: left !important;
+        align-items: center !important;
+    }
 
-            /* Smaller "When" Box for Mobile */
-            .time-box { min-width: 65px !important; padding: 5px !important; margin-right: 5px !important; }
-            .time-box div:first-child { font-size: 0.7rem !important; } /* Time text */
-            .time-box div:last-child { font-size: 0.9rem !important; margin-top: 2px !important; padding-top: 2px !important; } /* Date text */
+    /* Shrink the "When" Box */
+    .party-card .party-info { 
+        flex-direction: row !important; 
+        gap: 10px !important;
+        width: 100%;
+    }
 
-            .party-card strong { font-size: 0.95rem !important; }
-            .party-card small { font-size: 0.75rem !important; display: block; }
+    /* Make the Date/Time box smaller */
+    .party-card div[style*="min-width:90px"] {
+        min-width: 65px !important;
+        padding: 5px !important;
+    }
 
-            .btn-join { 
-                min-width: 80px !important; 
-                padding: 8px 10px !important; 
-                font-size: 0.75rem !important; 
-            }
-        }
+    /* Smaller Text */
+    .party-card strong { font-size: 1rem !important; } /* Title */
+    .party-card small { font-size: 0.8rem !important; } /* Host */
+    .party-card div[style*="font-size:0.9rem"] { font-size: 0.7rem !important; } /* Time text */
+    .party-card div[style*="font-size:1.1rem"] { font-size: 0.9rem !important; } /* Date text */
 
-        /* LIVE BADGE */
-        .live-now { animation: pulse-gold 2s infinite; background: #252115 !important; }
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 5px rgba(241, 196, 15, 0.2); }
-            50% { box-shadow: 0 0 15px rgba(241, 196, 15, 0.5); }
-            100% { box-shadow: 0 0 5px rgba(241, 196, 15, 0.2); }
-        }
+    /* Compact Join Button */
+    .btn-join {
+        min-width: 80px !important;
+        padding: 8px 12px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .live-badge {
+        font-size: 0.6rem !important;
+        padding: 1px 4px !important;
+    }
+}
         .live-badge { background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
 
         /* Modal */
