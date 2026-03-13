@@ -237,19 +237,38 @@
                 const myKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
 
                 data.forEach(p => {
-                    const now = new Date();
-                    const currentHour = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', hour12: true });
-                    const isLive = (currentHour === p.time.replace(':00', ''));
+                    // 1. Get Current Time in Pacific (PT)
+                    const ptNowStr = new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
+                    const ptNow = new Date(ptNowStr);
+
+                    // 2. Setup Event Time and "Midnight PT" for that event day
+                    const eventTime = new Date(p.date + "-2026 " + p.time);
+                    
+                    // Create a "Midnight" marker for the end of the event day (PT)
+                    const midnightPT = new Date(p.date + "-2026 11:59:59 PM");
+
+                    // 3. DISAPPEAR LOGIC: If it is currently past Midnight PT of the event date
+                    if (ptNow > midnightPT) return; 
+
+                    // 4. GREY CHECK: If current PT is past the start time but before Midnight
+                    const isPast = ptNow > eventTime;
+                    
+                    // Standard LIVE check (Only if not past start time)
+                    const currentHourStr = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+                    const isLive = (currentHourStr === p.time.replace(':00', '')) && !isPast;
 
                     const isOfficial = (p.category === 'Official');
-                    const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
-                    const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
-                    const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
+                    
+                    // --- THEME COLORS ---
+                    const themeColor = isPast ? '#444' : (isOfficial ? '#f1c40f' : '#00d4ff');
+                    const themeBg = isPast ? 'rgba(50, 50, 50, 0.1)' : (isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)');
+                    const btnColor = isPast ? '#222' : (isOfficial ? '#8e44ad' : '#2980b9');
+                    const opacity = isPast ? '0.4' : '1'; 
 
                     const hasLink = p.link && p.link.trim() !== "";
-                    const joinBtn = hasLink 
+                    const joinBtn = (hasLink && !isPast) 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
-                        : `<button class="btn-join" style="background:#333; color:#666; cursor:not-allowed;" disabled>NO LINK</button>`;
+                        : `<button class="btn-join" style="background:#333; color:#666; cursor:not-allowed;" disabled>${isPast ? 'ENDED' : 'NO LINK'}</button>`;
 
                     const canEdit = p.submissionID && myKeys.includes(p.submissionID);
                     const editBtn = canEdit 
@@ -260,14 +279,14 @@
                         : '';
 
                     const card = `
-                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}">
+                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}" style="opacity: ${opacity}; border-left-color: ${isPast ? '#333' : ''}">
                             <div class="party-info">
                                 <div class="time-box" style="background:${themeBg}; padding:10px; border-radius:10px; border: 1px solid ${themeColor}; min-width:90px; text-align:center;">
                                     <div style="color:${themeColor}; font-weight:bold; font-size:0.9rem;">${p.time}</div>
-                                    <div style="color:#fff; font-weight:900; font-size:1.1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:4px; margin-top:4px;">${p.date}</div>
+                                    <div style="color:${isPast ? '#666' : '#fff'}; font-weight:900; font-size:1.1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:4px; margin-top:4px;">${p.date}</div>
                                 </div>
                                 <div>
-                                    <strong style="color: #fff;">${p.title} ${isLive ? '<span class="live-badge">LIVE</span>' : ''}</strong>
+                                    <strong style="color: ${isPast ? '#666' : '#fff'};">${p.title} ${isLive ? '<span class="live-badge">LIVE</span>' : ''}</strong>
                                     <small style="color: ${themeColor}; display:block;">Host: ${p.host}</small>
                                     ${editBtn}
                                 </div>
