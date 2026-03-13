@@ -229,31 +229,39 @@
         async function loadParties() {
             try {
                 const response = await fetch(API_URL);
-                const data = await response.json();
+                // 1. Get the data
+                let data = await response.json();
+
+                // 2. AUTO-ARRANGE: Sort by Date and Time (Earliest first)
+                data.sort((a, b) => {
+                    const timeA = new Date(a.date + "-2026 " + a.time);
+                    const timeB = new Date(b.date + "-2026 " + b.time);
+                    return timeA - timeB;
+                });
+
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
-                offDiv.innerHTML = ""; comDiv.innerHTML = "";
+                offDiv.innerHTML = ""; 
+                comDiv.innerHTML = "";
 
                 const myKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
 
                 data.forEach(p => {
-                    // 1. Get Current Time in Pacific (PT)
+                    // 3. Get Current Time in Pacific (PT)
                     const ptNowStr = new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
                     const ptNow = new Date(ptNowStr);
 
-                    // 2. Setup Event Time and "Midnight PT" for that event day
+                    // 4. Setup Event Time and "Midnight PT" for that event day
                     const eventTime = new Date(p.date + "-2026 " + p.time);
-                    
-                    // Create a "Midnight" marker for the end of the event day (PT)
                     const midnightPT = new Date(p.date + "-2026 11:59:59 PM");
 
-                    // 3. DISAPPEAR LOGIC: If it is currently past Midnight PT of the event date
+                    // 5. DISAPPEAR LOGIC: If it is currently past Midnight PT of the event date, skip it
                     if (ptNow > midnightPT) return; 
 
-                    // 4. GREY CHECK: If current PT is past the start time but before Midnight
+                    // 6. GREY CHECK: If current PT is past the start time but before Midnight
                     const isPast = ptNow > eventTime;
                     
-                    // Standard LIVE check (Only if not past start time)
+                    // Standard LIVE check
                     const currentHourStr = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
                     const isLive = (currentHourStr === p.time.replace(':00', '')) && !isPast;
 
@@ -297,9 +305,10 @@
                     if (isOfficial) offDiv.innerHTML += card;
                     else comDiv.innerHTML += card;
                 });
-            } catch (err) { console.log("Loading..."); }
+            } catch (err) { 
+                console.error("Error loading/sorting:", err);
+            }
         }
-
         async function submitParty() {
             const btn = document.querySelector('.btn-submit');
             if (btn.disabled) return;
