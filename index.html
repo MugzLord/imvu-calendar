@@ -1,78 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMVU Party Guide</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        .clock { color: #00d4ff; font-weight: bold; font-size: 1.2rem; }
-        
-        .lane-title { background: #333; padding: 10px; margin-top: 20px; border-radius: 5px; font-weight: bold; }
-        .official-lane { border-left: 5px solid #FFD700; }
-        .community-lane { border-left: 5px solid #00d4ff; }
-        
-        .party-card { background: #1e1e1e; margin: 10px 0; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-join { background: #8e44ad; color: white; border: none; padding: 10px 20px; border-radius: 5px; text-decoration: none; cursor: pointer; }
-        
-        /* Mobile adjustment */
-        @media (max-width: 600px) {
-            .party-card { flex-direction: column; align-items: flex-start; }
-            .btn-join { margin-top: 10px; width: 100%; text-align: center; }
+        :root {
+            --vui-gold: #f1c40f;
+            --vui-purple: #8e44ad;
+            --community-blue: #00d4ff;
+            --bg-dark: #0f0f0f;
+            --card-bg: #1a1a1a;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e0e0e0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px;
+            line-height: 1.6;
+        }
+
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .header-controls { display: flex; align-items: center; gap: 20px; }
+
+        .clock { 
+            color: var(--community-blue); 
+            font-weight: bold; font-size: 1.4rem; text-shadow: 0 0 10px rgba(0,212,255,0.4);
+        }
+
+        .btn-submit {
+            background: linear-gradient(45deg, var(--vui-gold), #d4af37);
+            color: black; border: none; padding: 10px 22px; border-radius: 25px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn-submit:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        /* Lane Styling */
+        .lane-title { 
+            margin-top: 40px; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;
+            padding: 10px; border-bottom: 1px solid #333; font-weight: bold;
+        }
+        .official-lane-title { color: var(--vui-gold); }
+        .community-lane-title { color: var(--community-blue); }
+
+        .party-list { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+
+        .party-card { 
+            background: var(--card-bg); padding: 20px; border-radius: 12px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #222; position: relative;
+        }
+
+        .official-card { border-left: 6px solid var(--vui-gold); }
+        .community-card { border-left: 6px solid var(--community-blue); }
+
+        .party-info strong { display: block; font-size: 1.2rem; color: #fff; }
+        .party-info small { color: #888; font-size: 0.9rem; }
+
+        .btn-join { 
+            background: var(--vui-purple); color: white; border: none; 
+            padding: 10px 20px; border-radius: 8px; text-decoration: none; 
+            font-weight: bold; transition: 0.2s;
+        }
+        .btn-join:hover { background: #9b59b6; }
+
+        /* Popup Form (Modal) */
+        .modal {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;
+        }
+        .modal-content {
+            background:#1e1e1e; padding:30px; border-radius:15px; width:90%; max-width:400px;
+            border: 1px solid #333; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .modal-content input, .modal-content select { 
+            width:100%; margin:12px 0; padding:12px; background:#2a2a2a; 
+            color:white; border:1px solid #444; border-radius: 8px; box-sizing: border-box;
+        }
+        .btn-post { 
+            background: var(--vui-purple); color:white; width:100%; padding:14px; 
+            border:none; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;
+        }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 15px; text-align: center; }
+            .party-card { flex-direction: column; text-align: center; gap: 15px; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>IMVU PARTY GUIDE</h1>
-    <div class="clock" id="ptClock">--:-- -- PT</div>
-</header>
+    <header>
+        <h1>IMVU PARTY GUIDE</h1>
+        <div class="header-controls">
+            <div class="clock" id="ptClock">--:-- -- PT</div>
+            <button class="btn-submit" onclick="toggleModal()">+ SUBMIT PARTY</button>
+        </div>
+    </header>
 
-<div class="lane-title official-lane">OFFICIAL VUI EVENTS</div>
-<div id="officialList"></div>
+    <div class="lane-title official-lane-title">Official VUI Events ✨</div>
+    <div id="officialList" class="party-list"></div>
 
-<div class="lane-title community-lane">COMMUNITY PARTIES</div>
-<div id="communityList"></div>
+    <div class="lane-title community-lane-title">Community Parties 🎧</div>
+    <div id="communityList" class="party-list"></div>
 
-<script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzRQSTpGVFo0spbCUGxrXKgWAciAgRm1Lb45zQ5mAqzLA9b8chHHMwhtXaa0GNBmtO7gA/exec';
+    <div id="modalOverlay" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--vui-gold); margin-top:0;">Submit Your Party</h2>
+            <select id="fCategory">
+                <option value="Official">Official VUI Event</option>
+                <option value="Community">Community Party</option>
+            </select>
+            <input type="text" id="fTitle" placeholder="Party Title (e.g. Neon Ball)">
+            <input type="text" id="fHost" placeholder="Host Name (IMVU Avatar)">
+            <input type="date" id="fDate">
+            <select id="fTime">
+                <option>12 PM - 2 PM PT</option>
+                <option>2 PM - 4 PM PT</option>
+                <option>4 PM - 6 PM PT</option>
+                <option>6 PM - 8 PM PT</option>
+                <option>8 PM - 10 PM PT</option>
+                <option>10 PM - 12 AM PT</option>
+            </select>
+            <input type="text" id="fLink" placeholder="IMVU Room Link">
+            <button class="btn-post" onclick="submitParty()">POST TO CALENDAR</button>
+            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
 
-    // Update PT Clock
-    function updateClock() {
-        const now = new Date();
-        const ptTime = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
-        document.getElementById('ptClock').innerText = ptTime + ' PT';
-    }
-    setInterval(updateClock, 1000);
+    <script>
+        // 1. REPLACE THIS WITH YOUR DEPLOY URL FROM GOOGLE APPS SCRIPT
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzRQSTpGVFo0spbCUGxrXKgWAciAgRm1Lb45zQ5mAqzLA9b8chHHMwhtXaa0GNBmtO7gA/exec';
 
-    // Fetch Parties from Google Sheets
-    async function fetchParties() {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        
-        const officialDiv = document.getElementById('officialList');
-        const communityDiv = document.getElementById('communityList');
+        // Update PT Clock every second
+        function updateClock() {
+            const now = new Date();
+            const ptTime = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
+            document.getElementById('ptClock').innerText = ptTime + ' PT';
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-        data.forEach(party => {
-            const card = `
-                <div class="party-card">
-                    <div>
-                        <strong>${party.time}</strong> | ${party.title}<br>
-                        <small>Host: ${party.host}</small>
-                    </div>
-                    <a href="${party.link}" class="btn-join">JOIN ROOM</a>
-                </div>
-            `;
-            if (party.category === 'Official') {
-                officialDiv.innerHTML += card;
-            } else {
-                communityDiv.innerHTML += card;
+        // Modal Controls
+        function toggleModal() {
+            const m = document.getElementById('modalOverlay');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Fetch and Display Parties
+        async function loadParties() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                const offDiv = document.getElementById('officialList');
+                const comDiv = document.getElementById('communityList');
+                
+                offDiv.innerHTML = "";
+                comDiv.innerHTML = "";
+
+                data.forEach(p => {
+                    const card = `
+                        <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'}">
+                            <div class="party-info">
+                                <span style="color:${p.category === 'Official' ? 'var(--vui-gold)' : 'var(--community-blue)'}; font-weight:bold;">${p.time}</span>
+                                <strong>${p.title}</strong>
+                                <small>Hosted by: ${p.host}</small>
+                            </div>
+                            <a href="${p.link}" target="_blank" class="btn-join">JOIN ROOM</a>
+                        </div>
+                    `;
+                    if (p.category === 'Official') offDiv.innerHTML += card;
+                    else comDiv.innerHTML += card;
+                });
+            } catch (err) {
+                console.log("Waiting for data...");
             }
-        });
-    }
+        }
 
-    fetchParties();
-</script>
+        // Submit Party to Google Sheets
+        async function submitParty() {
+            const btn = document.querySelector('.btn-post');
+            btn.innerText = "POSTING...";
+            btn.disabled = true;
+
+            const payload = {
+                category: document.getElementById('fCategory').value,
+                title: document.getElementById('fTitle').value,
+                host: document.getElementById('fHost').value,
+                date: document.getElementById('fDate').value,
+                time: document.getElementById('fTime').value,
+                link: document.getElementById('fLink').value
+            };
+
+            await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Crucial for Google Apps Script
+                body: JSON.stringify(payload)
+            });
+
+            alert("Party Submitted! It will appear shortly.");
+            location.reload();
+        }
+
+        loadParties();
+    </script>
 </body>
 </html>
