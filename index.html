@@ -21,11 +21,49 @@
             line-height: 1.6;
         }
 
+        /* HEADER BOX STYLES */
         header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 30px;
+            position: relative; 
+            overflow: hidden; 
+            height: 160px; 
+            display: flex; 
+            align-items: flex-end; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            margin-bottom: 20px; 
+            background-color: #000;
+        }
+
+        /* BANNER PHOTO LAYER */
+        .header-bg {
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background-image: url('YOUR_IMAGE_LINK_HERE'); /* PASTE YOUR PHOTO LINK HERE */
+            background-size: cover; 
+            background-position: center; 
+            z-index: 1; 
+            opacity: 0.7;
+        }
+
+        /* DARK SHADOW OVER PHOTO */
+        .header-overlay {
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 100%); 
+            z-index: 2;
+        }
+
+        /* TEXT LAYER */
+        .header-content {
+            position: relative; 
+            z-index: 3; 
+            width: 100%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 25px 15px 25px;
         }
 
         .header-controls { display: flex; align-items: center; gap: 20px; }
@@ -71,30 +109,34 @@
         }
         .btn-join:hover:not([disabled]) { background: #9b59b6; }
 
-        /* Modal Styles */
-        .modal {
-            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;
-        }
-        .modal-content {
-            background:#1e1e1e; padding:30px; border-radius:15px; width:90%; max-width:400px;
-            border: 1px solid #333; box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        .modal-content input, .modal-content select { 
-            width:100%; margin:12px 0; padding:12px; background:#2a2a2a; 
-            color:white; border:1px solid #444; border-radius: 8px; box-sizing: border-box;
-        }
-        .btn-post { 
-            background: var(--vui-purple); color:white; width:100%; padding:14px; 
-            border:none; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;
+        /* MOBILE STYLES */
+        @media (max-width: 768px) {
+            header {
+                height: 200px !important;
+                flex-direction: column !important; 
+                justify-content: flex-end !important;
+                padding-bottom: 15px !important;
+            }
+            .header-content {
+                flex-direction: column !important;
+                padding: 0 15px 15px 15px !important;
+            }
+            header h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 10px !important;
+                text-align: center;
+            }
+            .header-controls {
+                flex-direction: column !important;
+                gap: 8px !important;
+                width: 100%;
+            }
+            .clock { font-size: 1.1rem !important; }
+            .party-card { flex-direction: column; gap: 15px; text-align: center; }
+            .party-info { flex-direction: column; gap: 10px; }
         }
 
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 15px; text-align: center; }
-            .party-card { flex-direction: column; text-align: center; gap: 15px; }
-            .header-controls { flex-direction: column; }
-        }
-        /* Animation for Glowing Card */
+        /* LIVE NOW EFFECTS */
         @keyframes pulse-gold {
             0% { box-shadow: 0 0 5px rgba(241, 196, 15, 0.2); }
             50% { box-shadow: 0 0 20px rgba(241, 196, 15, 0.6); border-color: var(--vui-gold); }
@@ -116,20 +158,44 @@
             margin-left: 10px;
             vertical-align: middle;
         }
+
+        /* Modal Styles */
+        .modal {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;
+        }
+        .modal-content {
+            background:#1e1e1e; padding:30px; border-radius:15px; width:90%; max-width:400px;
+            border: 1px solid #333; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .modal-content input, .modal-content select { 
+            width:100%; margin:12px 0; padding:12px; background:#2a2a2a; 
+            color:white; border:1px solid #444; border-radius: 8px; box-sizing: border-box;
+        }
+        .btn-post { 
+            background: var(--vui-purple); color:white; width:100%; padding:14px; 
+            border:none; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>IMVU PARTY GUIDE</h1>
-        <div class="header-controls">
-            <div class="clock" id="ptClock">--:-- -- PT</div>
-            <button class="btn-submit" onclick="toggleModal()">+ SUBMIT PARTY</button>
+        <div class="header-bg"></div>
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1 style="margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,1);">IMVU PARTY GUIDE</h1>
+            <div class="header-controls">
+                <div class="clock" id="ptClock">--:-- -- PT</div>
+                <button class="btn-submit" onclick="toggleModal()">+ SUBMIT PARTY</button>
+            </div>
         </div>
     </header>
-    <div style="font-size: 0.75rem; color: #666; text-align: center; margin-top: -15px; margin-bottom: 25px; padding: 0 20px; font-style: italic;">
+
+    <div style="font-size: 0.7rem; color: #666; text-align: center; margin-top: 5px; margin-bottom: 25px; font-style: italic; opacity: 0.8;">
         This is a community-run party schedule created to help players organize events. This website is not affiliated with, endorsed by, or an official product of IMVU Inc.
-    </div>    
+    </div>   
+
     <div class="lane-title official-lane-title">Official IMVU Events ✨</div>
     <div id="officialList" class="party-list"></div>
 
@@ -197,39 +263,36 @@
                 comDiv.innerHTML = "";
 
                 data.forEach(p => {
-                                    // Get current Pacific Time Hour (e.g., "5 PM")
-                                    const now = new Date();
-                                    const currentHour = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', hour12: true });
-                                    
-                                    // Match formatting (removes :00 if present in Sheet)
-                                    const partyHour = p.time.replace(':00', ''); 
-                                    const isLive = (currentHour === partyHour);
-                
-                                    const hasLink = p.link && p.link.trim() !== "";
-                                    const joinBtn = hasLink 
-                                        ? `<a href="${p.link}" target="_blank" class="btn-join">JOIN ROOM</a>`
-                                        : `<button class="btn-join" style="background: #333; color: #777; border: 1px solid #444; cursor: not-allowed;" disabled>NO LINK</button>`;
-                
-                                    const card = `
-                                        <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}">
-                                            <div class="party-info" style="display: flex; align-items: center;">
-                                                <div style="background:rgba(241, 196, 15, 0.05); padding:10px; border-radius:10px; border: 1px solid #f1c40f; min-width:90px; text-align:center; margin-right:20px;">
-                                                    <div style="color:#f1c40f; font-weight:bold; font-size:0.9rem; margin-bottom:4px;">${p.time}</div>
-                                                    <div style="color:#fff; font-weight:900; font-size:1.1rem; letter-spacing:0.5px; border-top:1px solid rgba(241,196,15,0.3); padding-top:4px; margin-top:4px;">${p.date}</div>
-                                                </div>
-                                                <div>
-                                                    <strong style="font-size: 1.3rem; color: #fff; display:block; margin-bottom:2px;">
-                                                        ${p.title} ${isLive ? '<span class="live-badge">LIVE NOW</span>' : ''}
-                                                    </strong>
-                                                    <small style="color: #f1c40f; opacity: 0.9; font-size:0.95rem;">Host: ${p.host}</small>
-                                                </div>
-                                            </div>
-                                            ${joinBtn}
-                                        </div>
-                                    `;
-                                    if (p.category === 'Official') offDiv.innerHTML += card;
-                                    else comDiv.innerHTML += card;
-                                });
+                    const now = new Date();
+                    const currentHour = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', hour12: true });
+                    const partyHour = p.time.replace(':00', ''); 
+                    const isLive = (currentHour === partyHour);
+
+                    const hasLink = p.link && p.link.trim() !== "";
+                    const joinBtn = hasLink 
+                        ? `<a href="${p.link}" target="_blank" class="btn-join">JOIN ROOM</a>`
+                        : `<button class="btn-join" style="background: #333; color: #777; border: 1px solid #444; cursor: not-allowed;" disabled>NO LINK</button>`;
+
+                    const card = `
+                        <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}">
+                            <div class="party-info" style="display: flex; align-items: center;">
+                                <div style="background:rgba(241, 196, 15, 0.05); padding:10px; border-radius:10px; border: 1px solid #f1c40f; min-width:90px; text-align:center; margin-right:20px;">
+                                    <div style="color:#f1c40f; font-weight:bold; font-size:0.9rem; margin-bottom:4px;">${p.time}</div>
+                                    <div style="color:#fff; font-weight:900; font-size:1.1rem; letter-spacing:0.5px; border-top:1px solid rgba(241,196,15,0.3); padding-top:4px; margin-top:4px;">${p.date}</div>
+                                </div>
+                                <div>
+                                    <strong style="font-size: 1.3rem; color: #fff; display:block; margin-bottom:2px;">
+                                        ${p.title} ${isLive ? '<span class="live-badge">LIVE NOW</span>' : ''}
+                                    </strong>
+                                    <small style="color: #f1c40f; opacity: 0.9; font-size:0.95rem;">Host: ${p.host}</small>
+                                </div>
+                            </div>
+                            ${joinBtn}
+                        </div>
+                    `;
+                    if (p.category === 'Official') offDiv.innerHTML += card;
+                    else comDiv.innerHTML += card;
+                });
             } catch (err) {
                 console.log("Waiting for data...");
             }
