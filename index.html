@@ -247,46 +247,47 @@
                 const myKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
 
                 data.forEach(p => {
-                    // 1. Create the Google Calendar Link
-                    // We format the date/time into the 'YYYYMMDDTHHMMSS' format Google needs
-                    const eventStart = new Date(p.date + "-2026 " + p.time);
-                    const eventEnd = new Date(eventStart.getTime() + (60 * 60 * 1000)); // Ends 1 hour later
-                    
-                    const fmt = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
-                    const gCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(p.title)}&dates=${fmt(eventStart)}/${fmt(eventEnd)}&details=${encodeURIComponent("Host: " + p.host + "\nRoom: " + p.link)}&location=${encodeURIComponent(p.link)}&sf=true&output=xml`;
-            
-                    const calBtn = !isPast ? `<a href="${gCalUrl}" target="_blank" title="Add to Google Calendar" style="text-decoration:none; margin-left:8px; font-size:1rem; vertical-align:middle;">📅</a>` : '';
-                    // 3. Get Current Time in Pacific (PT)
+                    // 1. Get Current Time in Pacific (PT)
                     const ptNowStr = new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
                     const ptNow = new Date(ptNowStr);
-
-                    // 4. Setup Event Time and "Midnight PT" for that event day
+                
+                    // 2. Setup Event Time and "Midnight PT"
                     const eventTime = new Date(p.date + "-2026 " + p.time);
                     const midnightPT = new Date(p.date + "-2026 11:59:59 PM");
-
-                    // 5. DISAPPEAR LOGIC: If it is currently past Midnight PT of the event date, skip it
+                
+                    // 3. DISAPPEAR LOGIC: Skip if past midnight
                     if (ptNow > midnightPT) return; 
-
-                    // 6. GREY CHECK: If current PT is past the start time but before Midnight
+                
+                    // 4. STATUS CHECKS: Calculate these FIRST so the buttons can use them
                     const isPast = ptNow > eventTime;
-                    
-                    // Standard LIVE check
                     const currentHourStr = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
                     const isLive = (currentHourStr === p.time.replace(':00', '')) && !isPast;
-
+                
+                    // 5. CREATE CALENDAR LINK (Now it knows what 'isPast' and 'eventTime' are)
+                    let calLink = "";
+                    try {
+                        const eventEnd = new Date(eventTime.getTime() + (60 * 60 * 1000)); // 1 hour duration
+                        const fmt = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
+                        const gCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(p.title)}&dates=${fmt(eventTime)}/${fmt(eventEnd)}&details=${encodeURIComponent("Host: " + p.host + "\nRoom: " + p.link)}&location=${encodeURIComponent(p.link)}&sf=true&output=xml`;
+                        
+                        // Use 📅 only if the party hasn't started yet
+                        calLink = !isPast ? `<a href="${gCalUrl}" target="_blank" title="Add to Google Calendar" style="text-decoration:none; margin-left:8px; font-size:1rem; vertical-align:middle; opacity:0.6;">📅</a>` : '';
+                    } catch(e) { 
+                        console.error("Calendar link failed for:", p.title); 
+                    }
+                
+                    // 6. THEME & BUTTON LOGIC
                     const isOfficial = (p.category === 'Official');
-                    
-                    // --- THEME COLORS ---
                     const themeColor = isPast ? '#444' : (isOfficial ? '#f1c40f' : '#00d4ff');
                     const themeBg = isPast ? 'rgba(50, 50, 50, 0.1)' : (isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)');
                     const btnColor = isPast ? '#222' : (isOfficial ? '#8e44ad' : '#2980b9');
                     const opacity = isPast ? '0.4' : '1'; 
-
+                
                     const hasLink = p.link && p.link.trim() !== "";
                     const joinBtn = (hasLink && !isPast) 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
                         : `<button class="btn-join" style="background:#333; color:#666; cursor:not-allowed;" disabled>${isPast ? 'ENDED' : 'NO LINK'}</button>`;
-
+                
                     const canEdit = p.submissionID && myKeys.includes(p.submissionID);
                     const editBtn = canEdit 
                         ? `<div style="margin-top:8px; display:flex; gap:5px;">
@@ -294,7 +295,8 @@
                             <button onclick="deleteParty('${p.submissionID}')" class="btn-delete">DELETE</button>
                            </div>` 
                         : '';
-
+                
+                    // 7. BUILD THE CARD
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}" style="opacity: ${opacity}; border-left-color: ${isPast ? '#333' : ''}">
                             <div class="party-info">
@@ -314,10 +316,6 @@
                     if (isOfficial) offDiv.innerHTML += card;
                     else comDiv.innerHTML += card;
                 });
-            } catch (err) { 
-                console.error("Error loading/sorting:", err);
-            }
-        }
         async function submitParty() {
             const btn = document.querySelector('.btn-submit');
             if (btn.disabled) return;
