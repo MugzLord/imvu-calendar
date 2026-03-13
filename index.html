@@ -89,9 +89,34 @@
 
         /* --- MOBILE HYBRID FIX --- */
         @media (max-width: 768px) {
-            /* Header adjustments */
-            header { height: 160px !important; }
-            header h1 { font-size: 1.3rem !important; }
+            /* Header adjustments - Vertical Stack for clarity */
+            header { 
+                height: 180px !important; 
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+            .header-content {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 5px !important;
+                padding-bottom: 10px !important;
+            }
+            header h1 { 
+                font-size: 1.4rem !important; 
+                margin: 0 !important;
+                text-align: center !important;
+            }
+            .header-controls {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 8px !important;
+            }
+            .clock { 
+                font-size: 1.1rem !important; 
+                white-space: nowrap !important; /* Forces clock to stay on one line */
+            }
             
             /* THE CARD FIX: Horizontal and Compact */
             .party-card {
