@@ -292,9 +292,32 @@
                     const myKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
                     const canEdit = p.submissionID && myKeys.includes(p.submissionID);
                     const editBtn = canEdit 
-                        ? `<div style="margin-top:5px;"><button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px; text-transform:uppercase;">Edit My Post</button></div>` 
+                        ? `<div style="margin-top:8px; display:flex; gap:5px;">
+                            <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
+                            <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #633; color:#a66; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">DELETE</button>
+                           </div>` 
                         : '';
-           
+        async function deleteParty(id) {
+            if (!confirm("Are you sure you want to delete this party? This cannot be undone.")) return;
+        
+            const payload = {
+                action: "delete",
+                submissionID: id
+            };
+        
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload)
+                });
+                
+                alert("Party Deleted.");
+                location.reload();
+            } catch (err) {
+                alert("Could not delete. Please try again.");
+            }
+        }
                     const card = `
                                 <div class="party-card ${isOfficial ? 'official-card' : 'community-card'} ${isLive ? 'live-now' : ''}">
                                     <div class="party-info">
