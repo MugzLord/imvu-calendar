@@ -111,29 +111,62 @@
 
         /* MOBILE STYLES */
         @media (max-width: 768px) {
-            header {
-                height: 200px !important;
-                flex-direction: column !important; 
-                justify-content: flex-end !important;
-                padding-bottom: 15px !important;
+            /* Shrink the header image area slightly */
+            header { 
+                height: 160px !important; 
+                padding-bottom: 10px !important;
             }
+            header h1 { font-size: 1.2rem !important; margin-bottom: 5px !important; }
+            
             .header-content {
                 flex-direction: column !important;
-                padding: 0 15px 15px 15px !important;
+                padding: 0 10px 10px 10px !important;
             }
-            header h1 {
-                font-size: 1.5rem !important;
-                margin-bottom: 10px !important;
-                text-align: center;
-            }
-            .header-controls {
-                flex-direction: column !important;
+            .header-controls { flex-direction: row !important; gap: 10px !important; }
+            .clock { font-size: 1rem !important; }
+        
+            /* THE CARD FIX: Horizontal and Compact */
+            .party-card {
+                flex-direction: row !important; /* Items stay side-by-side */
+                padding: 10px !important;
                 gap: 8px !important;
-                width: 100%;
+                text-align: left !important;
+                align-items: center !important;
+                justify-content: space-between !important;
             }
-            .clock { font-size: 1.1rem !important; }
-            .party-card { flex-direction: column; gap: 15px; text-align: center; }
-            .party-info { flex-direction: column; gap: 10px; }
+        
+            /* Wrap the Info (Time box + Title/Host) */
+            .party-info { 
+                flex-direction: row !important; 
+                gap: 10px !important;
+                align-items: center !important;
+            }
+        
+            /* Shrink the Gold "When" Box */
+            div[style*="min-width:90px"] {
+                min-width: 60px !important;
+                padding: 4px !important;
+                margin-right: 8px !important;
+            }
+        
+            /* Scaling down all text */
+            .party-card strong { font-size: 0.95rem !important; line-height: 1.1; }
+            .party-card small { font-size: 0.75rem !important; }
+            div[style*="font-size:0.9rem"] { font-size: 0.65rem !important; } /* Time text */
+            div[style*="font-size:1.1rem"] { font-size: 0.85rem !important; } /* Date text */
+        
+            /* Compact Button */
+            .btn-join {
+                min-width: 85px !important;
+                padding: 6px 10px !important;
+                font-size: 0.75rem !important;
+            }
+        
+            .live-badge {
+                font-size: 0.55rem !important;
+                padding: 1px 3px !important;
+                margin-left: 5px !important;
+            }
         }
 
         /* LIVE NOW EFFECTS */
