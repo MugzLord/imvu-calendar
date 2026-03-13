@@ -247,6 +247,15 @@
                 const myKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
 
                 data.forEach(p => {
+                    // 1. Create the Google Calendar Link
+                    // We format the date/time into the 'YYYYMMDDTHHMMSS' format Google needs
+                    const eventStart = new Date(p.date + "-2026 " + p.time);
+                    const eventEnd = new Date(eventStart.getTime() + (60 * 60 * 1000)); // Ends 1 hour later
+                    
+                    const fmt = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
+                    const gCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(p.title)}&dates=${fmt(eventStart)}/${fmt(eventEnd)}&details=${encodeURIComponent("Host: " + p.host + "\nRoom: " + p.link)}&location=${encodeURIComponent(p.link)}&sf=true&output=xml`;
+            
+                    const calBtn = !isPast ? `<a href="${gCalUrl}" target="_blank" title="Add to Google Calendar" style="text-decoration:none; margin-left:8px; font-size:1rem; vertical-align:middle;">📅</a>` : '';
                     // 3. Get Current Time in Pacific (PT)
                     const ptNowStr = new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
                     const ptNow = new Date(ptNowStr);
@@ -294,7 +303,7 @@
                                     <div style="color:${isPast ? '#666' : '#fff'}; font-weight:900; font-size:1.1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:4px; margin-top:4px;">${p.date}</div>
                                 </div>
                                 <div>
-                                    <strong style="color: ${isPast ? '#666' : '#fff'};">${p.title} ${isLive ? '<span class="live-badge">LIVE</span>' : ''}</strong>
+                                    <strong style="color: ${isPast ? '#666' : '#fff'};">${p.title} ${isLive ? '<span class="live-badge">LIVE</span>' : ''} ${calLink}</strong>
                                     <small style="color: ${themeColor}; display:block;">Host: ${p.host}</small>
                                     ${editBtn}
                                 </div>
