@@ -124,12 +124,30 @@
             <input type="text" id="fHost" placeholder="Host Name (IMVU Avatar)">
             <input type="date" id="fDate">
             <select id="fTime">
-                <option>12 PM - 2 PM PT</option>
-                <option>2 PM - 4 PM PT</option>
-                <option>4 PM - 6 PM PT</option>
-                <option>6 PM - 8 PM PT</option>
-                <option>8 PM - 10 PM PT</option>
-                <option>10 PM - 12 AM PT</option>
+                <option value="12 AM">12:00 AM PT</option>
+                <option value="1 AM">1:00 AM PT</option>
+                <option value="2 AM">2:00 AM PT</option>
+                <option value="3 AM">3:00 AM PT</option>
+                <option value="4 AM">4:00 AM PT</option>
+                <option value="5 AM">5:00 AM PT</option>
+                <option value="6 AM">6:00 AM PT</option>
+                <option value="7 AM">7:00 AM PT</option>
+                <option value="8 AM">8:00 AM PT</option>
+                <option value="9 AM">9:00 AM PT</option>
+                <option value="10 AM">10:00 AM PT</option>
+                <option value="11 AM">11:00 AM PT</option>
+                <option value="12 PM">12:00 PM PT</option>
+                <option value="1 PM">1:00 PM PT</option>
+                <option value="2 PM">2:00 PM PT</option>
+                <option value="3 PM">3:00 PM PT</option>
+                <option value="4 PM">4:00 PM PT</option>
+                <option value="5 PM">5:00 PM PT</option>
+                <option value="6 PM">6:00 PM PT</option>
+                <option value="7 PM">7:00 PM PT</option>
+                <option value="8 PM">8:00 PM PT</option>
+                <option value="9 PM">9:00 PM PT</option>
+                <option value="10 PM">10:00 PM PT</option>
+                <option value="11 PM">11:00 PM PT</option>
             </select>
             <input type="text" id="fLink" placeholder="IMVU Room Link">
             <button class="btn-post" onclick="submitParty()">POST TO CALENDAR</button>
@@ -172,9 +190,13 @@
                     const card = `
                         <div class="party-card ${p.category === 'Official' ? 'official-card' : 'community-card'}">
                             <div class="party-info">
-                                <span style="color:${p.category === 'Official' ? 'var(--vui-gold)' : 'var(--community-blue)'}; font-weight:bold;">${p.time}</span>
-                                <strong>${p.title}</strong>
-                                <small>Hosted by: ${p.host}</small>
+                                <span style="background:rgba(255,255,255,0.1); padding:5px 12px; border-radius:6px; margin-right:15px; font-weight:bold; font-size:1rem; color:${p.category === 'Official' ? 'var(--vui-gold)' : 'var(--community-blue)'}; border: 1px solid rgba(255,255,255,0.1);">
+                                    ${p.time}
+                                </span>
+                                <div style="display:inline-block; vertical-align:middle;">
+                                    <strong>${p.title}</strong>
+                                    <small>Host: ${p.host}</small>
+                                </div>
                             </div>
                             <a href="${p.link}" target="_blank" class="btn-join">JOIN ROOM</a>
                         </div>
