@@ -115,56 +115,60 @@
 
         async function loadParties() {
             try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                data.sort((a,b) => new Date(a.date+"-2026 "+a.time) - new Date(b.date+"-2026 "+b.time));
+                const response = await fetch(API_URL);
+                let data = await response.json();
+        
+                // 1. SORTING
+                data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
         
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
                 const curHour = ptNow.getHours() % 12 || 12;
                 const ampm = ptNow.getHours() >= 12 ? 'PM' : 'AM';
         
                 data.forEach(p => {
-                    const isOff = p.category.includes('Official');
-                    const color = isOff ? '#f1c40f' : '#00d4ff';
-                    const isLive = (p.date === todayStr && p.time.startsWith(curHour + ":") && p.time.includes(ampm));
-                    const timeDisp = (p.endTime && p.endTime.trim() !== "" && p.endTime !== "undefined") ? `${p.time} - ${p.endTime}` : p.time;
-        
-                    // --- BULLETPROOF JOIN BUTTON LOGIC ---
-                    // This checks if the link is missing, empty, or says "undefined"
-                    const hasLink = p.link && p.link.trim() !== "" && p.link !== "undefined" && p.link !== "null";
+                    const isOfficial = p.category.includes('Official');
+                    const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     
-                    let joinBtn = hasLink 
-                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${isOff ? '#8e44ad' : '#2980b9'}; display:inline-block;">JOIN</a>`
+                    const isLive = (p.date === todayStr && p.time.startsWith(curHour + ":") && p.time.includes(ampm));
+                    const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
+                    const displayTime = (p.endTime && p.endTime !== "undefined" && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
+        
+                    // --- THE STRICTOR LINK CHECK ---
+                    // This treats "undefined", "null", or just whitespace as NO LINK
+                    const rawLink = String(p.link).trim();
+                    const hasValidLink = rawLink !== "" && rawLink !== "undefined" && rawLink !== "null" && rawLink.startsWith("http");
+        
+                    let joinBtn = hasValidLink 
+                        ? `<a href="${rawLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:inline-block;">JOIN</a>`
                         : `<button class="btn-join" disabled style="background:#333 !important; opacity:0.5; cursor:not-allowed; color:#777 !important; border:1px solid #444;">NO LINK</button>`;
         
-                    const card = `<div class="party-card ${isOff?'official-card':'community-card'}" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 12px; border-radius: 15px; background: #1a1a1a; border-left: 5px solid ${isOff?'#f1c40f':'#00d4ff'};">
-                        <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
-                            <div style="border: 1px solid ${color}; padding: 8px; border-radius: 10px; min-width: 90px; text-align: center; background: rgba(255,255,255,0.02);">
-                                <div style="color:${color}; font-weight:bold; font-size:0.7rem;">${timeDisp}</div>
-                                <div style="color:#fff; font-weight:bold; font-size:1rem;">${p.date}</div>
-                            </div>
-                            <div style="flex: 1;">
-                                <strong style="color:#fff; font-size:1rem; display: block;">${p.title}${isLive ? '<span class="live-badge">LIVE</span>' : ''}</strong>
-                                <div style="color:${color}; font-size:0.8rem; margin-top: 2px;">Host: ${p.host}</div>
-                                <div style="margin-top:8px; display: flex; gap: 5px;">
-                                    <button onclick="openEdit('${p.submissionID}','${p.title.replace(/'/g,"\\'")}','${p.host.replace(/'/g,"\\'")}','${p.link}','${p.category}','${p.date}','${p.time}','${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 5px; cursor:pointer; border-radius:4px;">EDIT</button>
-                                    <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 5px; cursor:pointer; border-radius:4px;">DELETE</button>
+                    const card = `
+                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:12px; border-radius:15px; background:#1a1a1a; border-left:5px solid ${themeColor}; gap:10px;">
+                            <div style="display:flex; align-items:center; gap:15px; flex:1; min-width:0;">
+                                <div style="border:1px solid ${themeColor}; padding:8px; border-radius:10px; min-width:85px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
+                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.65rem;">${displayTime}</div>
+                                    <div style="color:#fff; font-weight:bold; font-size:0.9rem;">${p.date}</div>
+                                </div>
+                                <div style="min-width:0; flex:1;">
+                                    <strong style="color:#fff; font-size:1rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}${liveBadge}</strong>
+                                    <div style="color:${themeColor}; font-size:0.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Host: ${p.host}</div>
+                                    <div style="margin-top:8px; display:flex; gap:5px;">
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">EDIT</button>
+                                        <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">DELETE</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div style="margin-left: 10px;">
-                            ${joinBtn}
-                        </div>
-                    </div>`;
-                    if (isOff) offDiv.innerHTML += card; else comDiv.innerHTML += card;
+                            <div style="flex-shrink:0;">${joinBtn}</div>
+                        </div>`;
+                    if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
                 });
-            } catch (e) { console.error(e); }
+            } catch (err) { console.error(err); }
         }
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
