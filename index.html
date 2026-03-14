@@ -140,13 +140,12 @@
                     const displayTime = (p.endTime && p.endTime !== "undefined" && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
         
                     // --- THE STRICTOR LINK CHECK ---
-                    // This treats "undefined", "null", or just whitespace as NO LINK
-                    const rawLink = String(p.link).trim();
-                    const hasValidLink = rawLink !== "" && rawLink !== "undefined" && rawLink !== "null" && rawLink.startsWith("http");
-        
-                    let joinBtn = hasValidLink 
-                        ? `<a href="${rawLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:inline-block;">JOIN</a>`
-                        : `<button class="btn-join" disabled style="background:#333 !important; opacity:0.5; cursor:not-allowed; color:#777 !important; border:1px solid #444;">NO LINK</button>`;
+                    const rawLink = String(p.link).trim();
+                    const hasValidLink = rawLink !== "" && rawLink !== "undefined" && rawLink !== "null" && rawLink.startsWith("http");
+        
+                    let joinBtn = hasValidLink 
+                        ? `<a href="${rawLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:inline-block;">JOIN</a>`
+                        : `<button class="btn-join" disabled style="background:#222 !important; color:#555 !important; border:1px solid #333; cursor:not-allowed; opacity:0.5;">NO LINK</button>`;
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:12px; border-radius:15px; background:#1a1a1a; border-left:5px solid ${themeColor}; gap:10px;">
