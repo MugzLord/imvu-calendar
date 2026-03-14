@@ -5,101 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMVU Party Guide</title>
     <style>
-        :root {
-            --vui-gold: #f1c40f;
-            --vui-purple: #8e44ad;
-            --community-blue: #00d4ff;
-            --bg-dark: #0f0f0f;
-            --card-bg: #1a1a1a;
-        }
-
-        body { 
-            background-color: var(--bg-dark); color: #e0e0e0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 15px; line-height: 1.6;
-        }
-
-        header { 
-            position: relative; overflow: hidden; height: 160px; 
-            display: flex; align-items: flex-end; border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 15px; background-color: #000;
-        }
-
-        .header-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/32c2014e93cbc5c11070d47675f5ed643ba2b3eb/Party%20Banner.jpg');
-            background-size: cover; background-position: center; z-index: 1; opacity: 0.7;
-        }
-
-        .header-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 100%); z-index: 2;
-        }
-
-        .header-content {
-            position: relative; z-index: 3; width: 100%; display: flex; 
-            justify-content: space-between; align-items: center; padding: 0 25px 15px 25px;
-        }
-
-        .clock { color: var(--community-blue); font-weight: bold; font-size: 1.4rem; }
-
-        .btn-submit {
-            background: linear-gradient(45deg, var(--vui-gold), #d4af37);
-            color: black; border: none; padding: 10px 22px; border-radius: 25px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-
-        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-
-        .tab-btn {
-            flex: 1; background: #1a1a1a; color: #888; border: 1px solid #333;
-            padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer;
-        }
+        :root { --vui-gold: #f1c40f; --vui-purple: #8e44ad; --community-blue: #00d4ff; --bg-dark: #0f0f0f; --card-bg: #1a1a1a; }
+        body { background-color: var(--bg-dark); color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; }
         
-        .tab-btn.active.gold-tab { background: rgba(241, 196, 15, 0.1); color: var(--vui-gold); border-color: var(--vui-gold); }
-        .tab-btn.active.blue-tab { background: rgba(0, 212, 255, 0.1); color: var(--community-blue); border-color: var(--community-blue); }
+        header { 
+            position: relative; height: 140px; display: flex; align-items: flex-end; 
+            border-radius: 15px; overflow: hidden; margin-bottom: 15px; background: #000; 
+        }
+        .header-bg { position: absolute; width: 100%; height: 100%; background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/32c2014e93cbc5c11070d47675f5ed643ba2b3eb/Party%20Banner.jpg'); background-size: cover; background-position: center; opacity: 0.6; }
+        .header-overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); }
+        .header-content { position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px 10px; z-index: 3; }
+        
+        .clock { color: var(--community-blue); font-weight: bold; font-size: 1.1rem; }
+        .btn-submit { background: var(--vui-gold); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
 
-        .party-list { display: flex; flex-direction: column; gap: 15px; }
+        .category-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; background: #1a1a1a; color: #888; border: 1px solid #333; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active.gold-tab { color: var(--vui-gold); border-color: var(--vui-gold); background: rgba(241, 196, 15, 0.1); }
+        .tab-btn.active.blue-tab { color: var(--community-blue); border-color: var(--community-blue); background: rgba(0, 212, 255, 0.1); }
 
         .party-card { 
-            background: var(--card-bg); padding: 25px; border-radius: 15px; 
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #222; border-left: 6px solid #444;
+            background: var(--card-bg); padding: 15px; border-radius: 15px; 
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; 
+            border-left: 5px solid #444; margin-bottom: 12px; gap: 15px;
         }
-
         .official-card { border-left-color: var(--vui-gold); }
         .community-card { border-left-color: var(--community-blue); }
 
-        .party-info { display: flex; align-items: center; gap: 25px; }
-
-        .live-badge {
-            background: #ff0000; color: white; font-size: 0.65rem; padding: 2px 8px;
-            border-radius: 4px; font-weight: bold; margin-left: 10px;
-            animation: blinker 1s linear infinite; vertical-align: middle;
+        .party-main { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 250px; }
+        
+        .time-box { 
+            background: rgba(255,255,255,0.03); padding: 8px; border-radius: 10px; 
+            border: 1px solid #333; min-width: 100px; text-align: center; 
         }
+
+        .live-badge { background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; margin-left: 5px; animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
 
         .btn-join { 
-            min-width: 130px; text-align: center; background: var(--vui-purple); 
-            color: white; border: none; padding: 12px 20px; border-radius: 10px; 
-            text-decoration: none; font-weight: bold;
+            width: 100%; max-width: 120px; text-align: center; color: white; 
+            border: none; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; 
         }
 
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; }
-        .modal-content { background:#1e1e1e; padding:25px; border-radius:15px; width:90%; max-width:380px; max-height: 90vh; overflow-y: auto; }
-        .modal-content input, .modal-content select { width:100%; margin:8px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing:border-box; }
-        label { font-size: 0.75rem; color: #888; margin-top: 5px; display: block; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
+        .modal-content { background:#1e1e1e; padding:20px; border-radius:15px; width:90%; max-width:360px; max-height: 85vh; overflow-y: auto; }
+        .modal-content input, .modal-content select { width:100%; margin:8px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing: border-box; }
     </style>
 </head>
 <body>
-
     <header>
-        <div class="header-bg"></div>
-        <div class="header-overlay"></div>
+        <div class="header-bg"></div><div class="header-overlay"></div>
         <div class="header-content">
-            <h1 style="margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,1);">IMVU PARTY GUIDE</h1>
-            <div class="header-controls">
-                <div class="clock" id="ptClock">--:-- -- PT</div>
+            <h2 style="margin:0; font-size: 1.2rem;">IMVU PARTY GUIDE</h2>
+            <div style="text-align: right;">
+                <div class="clock" id="ptClock">--:-- PT</div>
                 <button class="btn-submit" onclick="toggleModal()">+ SUBMIT</button>
             </div>
         </div>
@@ -110,67 +69,34 @@
         <button id="tabCommunity" class="tab-btn blue-tab" onclick="switchTab('Community')">Community 🎧</button>
     </div>
 
-    <div id="officialLane"><div id="officialList" class="party-list"></div></div>
-    <div id="communityLane" style="display: none;"><div id="communityList" class="party-list"></div></div>
+    <div id="officialLane"><div id="officialList"></div></div>
+    <div id="communityLane" style="display:none;"><div id="communityList"></div></div>
 
-    <div id="modalOverlay" class="modal">
-        <div class="modal-content">
-            <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0;">Submit Party</h2>
-            <select id="fCategory">
-                <option value="Official">Official IMVU Event</option>
-                <option value="Community">Community Party</option>
-            </select>
-            <input type="text" id="fTitle" placeholder="Party Title">
-            <input type="text" id="fHost" placeholder="Host/s">
-            <input type="date" id="fDate">
-            
-            <label>Start Time</label>
-            <select id="fTime">
-                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option>
-                <option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option>
-                <option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option>
-                <option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option>
-                <option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option>
-                <option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option>
-                <option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option>
-                <option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option>
-                <option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option>
-                <option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option>
-                <option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
-            </select>
-
-            <label>End Time</label>
-            <select id="fEndTime">
-                <option value="">No End Time</option>
-                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option>
-                <option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option>
-                <option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option>
-                <option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option>
-                <option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option>
-                <option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option>
-                <option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option>
-                <option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option>
-                <option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option>
-                <option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option>
-                <option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
-            </select>
-
-            <input type="text" id="fLink" placeholder="Room Link">
-            <input type="text" id="fEditor" placeholder="Your Name (Required)">
-            
-            <button class="btn-submit" id="modalSubmitBtn" style="width:100%;" onclick="submitParty()">POST PARTY</button>
-            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
+    <div id="modalOverlay" class="modal"><div class="modal-content">
+        <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0;">Submit Party</h2>
+        <select id="fCategory"><option value="Official">Official IMVU Event</option><option value="Community">Community Party</option></select>
+        <input type="text" id="fTitle" placeholder="Party Title">
+        <input type="text" id="fHost" placeholder="Host/s">
+        <input type="date" id="fDate">
+        <select id="fTime">
+            <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+            <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+        </select>
+        <select id="fEndTime"><option value="">No End Time</option>
+            <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+            <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+        </select>
+        <input type="text" id="fLink" placeholder="Room Link">
+        <input type="text" id="fEditor" placeholder="Your Name">
+        <button class="btn-submit" id="modalSubmitBtn" style="width:100%;" onclick="submitParty()">POST PARTY</button>
+        <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px;">Cancel</button>
+    </div></div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbz5mXHGoEvxM9fq6Jp8Obwg2rHfvYHPlShJ_EvmbYaveoDSAGpfW3ZKp2hMzEvKdfQ_MA/exec';
 
         function updateClock() {
-            const now = new Date();
-            const ptTime = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
+            const ptTime = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
             document.getElementById('ptClock').innerText = ptTime + ' PT';
         }
         setInterval(updateClock, 1000); updateClock();
@@ -184,115 +110,75 @@
 
         function toggleModal() {
             const m = document.getElementById('modalOverlay');
-            if (m.style.display === 'flex') {
-                m.style.display = 'none';
-                window.editingID = null;
-                document.getElementById('modalSubmitBtn').innerText = "POST PARTY";
-            } else { m.style.display = 'flex'; }
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
         async function loadParties() {
             try {
-                const response = await fetch(API_URL);
-                let data = await response.json();
-
-                data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                data.sort((a,b) => new Date(a.date+"-2026 "+a.time) - new Date(b.date+"-2026 "+b.time));
 
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
 
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
+                const todayStr = ptNow.getDate() + "-" + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][ptNow.getMonth()];
                 const curHour = ptNow.getHours() % 12 || 12;
                 const ampm = ptNow.getHours() >= 12 ? 'PM' : 'AM';
 
                 data.forEach(p => {
-                    const isOfficial = p.category.includes('Official');
-                    const color = isOfficial ? '#f1c40f' : '#00d4ff';
-                    const bg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
-                    
+                    const isOff = p.category.includes('Official');
+                    const color = isOff ? '#f1c40f' : '#00d4ff';
                     const isLive = (p.date === todayStr && p.time.startsWith(curHour + ":") && p.time.includes(ampm));
-                    const badge = isLive ? `<span class="live-badge">LIVE</span>` : "";
-                    const timeDisp = (p.endTime && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
+                    const timeDisp = (p.endTime) ? `${p.time} - ${p.endTime}` : p.time;
 
-                    // --- THE FIX: GREY OUT IF LINK IS EMPTY ---
-                    let joinBtn = (p.link && p.link.trim() !== "" && p.link !== "undefined")
-                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}">JOIN</a>`
+                    // --- JOIN BUTTON LOGIC FIX ---
+                    let joinBtn = (p.link && p.link.trim() !== "" && p.link !== "undefined") 
+                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${isOff?'#8e44ad':'#2980b9'}">JOIN</a>`
                         : `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
 
-                    const card = `
-                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
-                            <div class="party-info">
-                                <div style="background:${bg}; padding:10px; border-radius:10px; border: 1px solid ${color}; min-width:115px; text-align:center;">
-                                    <div style="color:${color}; font-weight:bold; font-size:0.7rem;">${timeDisp}</div>
-                                    <div style="color:#fff; font-weight:900; font-size:1.1rem;">${p.date}</div>
-                                </div>
-                                <div>
-                                    <strong style="color: #fff; font-size:1.1rem;">${p.title}${badge}</strong>
-                                    <small style="color: ${color}; display:block;">Host: ${p.host}</small>
-                                    <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
-                                        <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">DELETE</button>
-                                    </div>
+                    const card = `<div class="party-card ${isOff?'official-card':'community-card'}">
+                        <div class="party-main">
+                            <div class="time-box" style="border-color:${color}">
+                                <div style="color:${color}; font-weight:bold; font-size:0.7rem;">${timeDisp}</div>
+                                <div style="color:#fff; font-weight:bold; font-size:1rem;">${p.date}</div>
+                            </div>
+                            <div>
+                                <strong style="color:#fff; font-size:1rem;">${p.title}${isLive ? '<span class="live-badge">LIVE</span>' : ''}</strong>
+                                <div style="color:${color}; font-size:0.8rem;">Host: ${p.host}</div>
+                                <div style="margin-top:5px;">
+                                    <button onclick="openEdit('${p.submissionID}','${p.title.replace(/'/g,"\\'")}','${p.host.replace(/'/g,"\\'")}','${p.link}','${p.category}','${p.date}','${p.time}','${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 5px; cursor:pointer; border-radius:4px;">EDIT</button>
+                                    <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 5px; cursor:pointer; border-radius:4px; margin-left:5px;">DELETE</button>
                                 </div>
                             </div>
-                            ${joinBtn}
-                        </div>`;
-                    if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
+                        </div>
+                        ${joinBtn}
+                    </div>`;
+                    if (isOff) offDiv.innerHTML += card; else comDiv.innerHTML += card;
                 });
-            } catch (err) { console.error(err); }
+            } catch (e) { console.error(e); }
         }
 
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value;
-            if (!editor || !dateVal) return alert("Fill in name and date!");
-
+            if (!editor || !dateVal) return alert("Fill Name and Date!");
             const d = new Date(dateVal + "T12:00:00");
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const sheetDate = d.getDate() + "-" + months[d.getMonth()];
-
-            const btn = document.getElementById('modalSubmitBtn');
-            btn.innerText = "SAVING..."; btn.disabled = true;
-
-            const payload = {
-                category: document.getElementById('fCategory').value,
-                title: document.getElementById('fTitle').value,
-                host: document.getElementById('fHost').value,
-                date: sheetDate,
-                time: document.getElementById('fTime').value,
-                endTime: document.getElementById('fEndTime').value,
-                link: document.getElementById('fLink').value,
-                submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9),
-                editedBy: editor
-            };
-
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
-            .then(() => setTimeout(() => location.reload(), 1500))
-            .catch(() => { alert("Error saving!"); btn.disabled = false; btn.innerText = "POST PARTY"; });
+            const sheetDate = d.getDate() + "-" + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+            document.getElementById('modalSubmitBtn').innerText = "SAVING...";
+            const payload = { category: document.getElementById('fCategory').value, title: document.getElementById('fTitle').value, host: document.getElementById('fHost').value, date: sheetDate, time: document.getElementById('fTime').value, endTime: document.getElementById('fEndTime').value, link: document.getElementById('fLink').value, submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9), editedBy: editor };
+            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(() => location.reload());
         }
 
-        function openEdit(id, title, host, link, category, date, time, endTime) {
+        function openEdit(id, title, host, link, cat, date, time, end) {
             window.editingID = id;
-            document.getElementById('fTitle').value = title;
-            document.getElementById('fHost').value = host;
-            document.getElementById('fLink').value = (link === "undefined" || !link) ? "" : link;
-            document.getElementById('fCategory').value = category;
-            document.getElementById('fTime').value = time;
-            document.getElementById('fEndTime').value = (endTime === "undefined" || !endTime) ? "" : endTime;
-            
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            if (date && date.includes("-")) {
-                const p = date.split('-');
-                const m = (months.indexOf(p[1]) + 1).toString().padStart(2, '0');
-                document.getElementById('fDate').value = `2026-${m}-${p[0].padStart(2, '0')}`;
-            }
+            document.getElementById('fTitle').value = title; document.getElementById('fHost').value = host; document.getElementById('fLink').value = (link === "undefined") ? "" : link; document.getElementById('fCategory').value = cat; document.getElementById('fTime').value = time; document.getElementById('fEndTime').value = (end === "undefined") ? "" : end;
             document.getElementById('modalSubmitBtn').innerText = "CONFIRM EDIT";
-            document.getElementById('modalOverlay').style.display = 'flex';
+            toggleModal();
         }
-
+        
         async function deleteParty(id) {
             const n = prompt("Your name:"); if(!n) return;
             await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", submissionID: id, editedBy: n }) });
