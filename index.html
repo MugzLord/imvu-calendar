@@ -166,21 +166,32 @@
         async function loadParties() {
             try {
                 const response = await fetch(API_URL);
-                const data = await response.json();
+                let data = await response.json();
+        
+                // --- THE ONLY PART YOU NEED TO UPDATE ---
+                data.sort((a, b) => {
+                    // We combine the date string (14-Mar) with the year and time
+                    // so the computer can actually compare them.
+                    const dateA = new Date(a.date + "-2026 " + a.time);
+                    const dateB = new Date(b.date + "-2026 " + b.time);
+                    return dateA - dateB;
+                });
+                // ----------------------------------------
+        
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
-
+        
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
-
+        
                     let joinBtn = p.link && p.link.trim() !== "" 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
-                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5;">NO LINK</button>`;
-
+                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
+        
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
                             <div class="party-info">
@@ -203,7 +214,6 @@
                 });
             } catch (err) { console.error(err); }
         }
-
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value; // 2026-03-14
