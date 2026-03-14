@@ -223,26 +223,61 @@
                 }
             }
             
-            // Fixed Edit function to include all fields
+            // --- UPDATED EDIT LOGIC ---
+            
+            // 1. Fixed openEdit to map all sheet columns correctly
             function openEdit(id, title, host, link, category, date, time) {
                 window.editingID = id;
                 
+                // Set form values
                 document.getElementById('fCategory').value = category;
                 document.getElementById('fTitle').value = title;
                 document.getElementById('fHost').value = host;
                 document.getElementById('fLink').value = link;
                 document.getElementById('fTime').value = time;
             
-                // Ensure date is formatted for the date picker (YYYY-MM-DD)
+                // Date Handling: Convert "14-Mar" format from sheet to "2026-03-14" for HTML input
                 if (date) {
-                    const d = new Date(date + "-2026");
-                    const isoDate = d.toISOString().split('T')[0];
-                    document.getElementById('fDate').value = isoDate;
+                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    const parts = date.split('-'); // ["14", "Mar"]
+                    const day = parts[0].padStart(2, '0');
+                    const month = (monthNames.indexOf(parts[1]) + 1).toString().padStart(2, '0');
+                    document.getElementById('fDate').value = `2026-${month}-${day}`;
                 }
             
+                // Show Modal & Update Button Text
                 const m = document.getElementById('modalOverlay');
                 m.style.display = 'flex';
-                document.querySelector('.btn-submit').innerText = "UPDATE MY PARTY";
+                document.querySelector('#modalOverlay .btn-submit').innerText = "UPDATE MY PARTY";
+            }
+            
+            // 2. Updated Card Generation (Inside loadParties loop)
+            // Ensure this specific line replaces your old editBtn variable:
+            const editBtn = canEdit ? `
+                <div style="margin-top:8px; display:flex; gap:5px;">
+                    <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}')" 
+                            style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">
+                        EDIT
+                    </button>
+                    <button onclick="deleteParty('${p.submissionID}')" class="btn-delete">
+                        DELETE
+                    </button>
+                </div>` : '';
+            
+            // 3. Clear form when modal closes
+            function toggleModal() {
+                const m = document.getElementById('modalOverlay');
+                const isOpening = m.style.display !== 'flex';
+                m.style.display = isOpening ? 'flex' : 'none';
+                
+                if (!isOpening) {
+                    window.editingID = null;
+                    document.getElementById('fTitle').value = "";
+                    document.getElementById('fHost').value = "";
+                    document.getElementById('fLink').value = "";
+                    document.getElementById('fDate').value = "";
+                    document.querySelector('#modalOverlay .btn-submit').innerText = "POST PARTY";
+                }
             }
             
             async function deleteParty(id) {
