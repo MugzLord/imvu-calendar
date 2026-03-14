@@ -183,7 +183,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // SORTING: Chronological order
+                // SORTING: Keeps your dates in order
                 data.sort((a, b) => {
                     const dateA = new Date(a.date + "-2026 " + a.time);
                     const dateB = new Date(b.date + "-2026 " + b.time);
@@ -202,7 +202,7 @@
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
         
-                    // --- UPDATED LIVE LOGIC (Stays live until End Time) ---
+                    // LIVE LOGIC: Duration-based
                     const startTime = new Date(p.date + "-2026 " + p.time);
                     const endTime = new Date(p.date + "-2026 " + p.endTime);
                     const isLive = (ptNow >= startTime && ptNow <= endTime);
@@ -212,14 +212,14 @@
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
                         : `<button class="btn-join" disabled style="background:#333; opacity:0.5;">NO LINK</button>`;
         
-                    // --- DISPLAY FIX: Showing Start Time - End Time ---
-                    const displayTime = p.endTime ? `${p.time} - ${p.endTime}` : p.time;
+                    // --- DISPLAY FIX: Shows "Start - End" or just "Start" if end is empty ---
+                    const timeRange = (p.endTime && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
                             <div class="party-info">
-                                <div style="background:${themeBg}; padding:10px; border-radius:10px; border: 1px solid ${themeColor}; min-width:110px; text-align:center;">
-                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.75rem;">${displayTime}</div>
+                                <div style="background:${themeBg}; padding:10px; border-radius:10px; border: 1px solid ${themeColor}; min-width:115px; text-align:center;">
+                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.7rem;">${timeRange}</div>
                                     <div style="color:#fff; font-weight:900; font-size:1.1rem;">${p.date}</div>
                                 </div>
                                 <div>
@@ -237,7 +237,7 @@
                 });
             } catch (err) { console.error(err); }
         }
-                      
+                              
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value; // 2026-03-14
