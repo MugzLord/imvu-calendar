@@ -193,28 +193,22 @@
             try {
                 const response = await fetch(API_URL);
                 let data = await response.json();
-                
-                // Remove expired parties (Older than today)
-                const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                ptNow.setHours(0,0,0,0);
-
-                data = data.filter(p => {
-                    const eventDate = new Date(p.date + "-2026");
-                    return eventDate >= ptNow;
-                });
-
+        
+                // SORTING ONLY (Removed the filter that was hiding your events)
                 data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
-                
+        
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
+                
+                if(!offDiv || !comDiv) return; // Safety check
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
-
+        
                 data.forEach(p => {
-                    const isOfficial = (p.category === 'Official');
+                    const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
-
+        
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
                             <div class="party-info">
@@ -233,10 +227,14 @@
                             </div>
                             <a href="${p.link || '#'}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>
                         </div>`;
+                    
                     if (isOfficial) offDiv.innerHTML += card;
                     else comDiv.innerHTML += card;
                 });
-            } catch (err) { console.error("Load failed:", err); }
+            } catch (err) { 
+                console.error("Load failed:", err);
+                alert("Could not load parties. Check your API_URL or Sheet permissions.");
+            }
         }
 
         function openEdit(id, title, host, link, category, date, time) {
