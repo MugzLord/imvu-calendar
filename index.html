@@ -317,17 +317,47 @@
             } catch (err) { console.error("Load failed:", err); }
         }
     
+
+        function openEdit(id, title, host, link, category, date, time) {
+            window.editingID = id;
+            
+            document.getElementById('fCategory').value = category;
+            document.getElementById('fTitle').value = title;
+            document.getElementById('fHost').value = host;
+            document.getElementById('fLink').value = link;
+            document.getElementById('fTime').value = time;
+        
+            // Convert "14-Mar" to "2026-03-14" for the date picker
+            if (date) {
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const parts = date.split('-'); 
+                const day = parts[0].padStart(2, '0');
+                const month = (monthNames.indexOf(parts[1]) + 1).toString().padStart(2, '0');
+                document.getElementById('fDate').value = `2026-${month}-${day}`;
+            }
+        
+            const m = document.getElementById('modalOverlay');
+            m.style.display = 'flex';
+            
+            // Target by ID to ensure the button text changes
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            if(submitBtn) submitBtn.innerText = "CONFIRM EDIT";
+        }
+        
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             if (!editor) {
-                alert("Please enter your name to post/edit.");
+                alert("Please enter your name to confirm this edit/post.");
                 return;
             }
-    
-            const btn = document.querySelector('#modalOverlay .btn-submit');
-            btn.innerText = "POSTING...";
+        
+            const btn = document.getElementById('modalSubmitBtn');
+            if (btn.disabled) return;
+            
+            const myID = window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9);
+            btn.innerText = "SAVING...";
             btn.disabled = true;
-    
+        
             const payload = {
                 category: document.getElementById('fCategory').value,
                 title: document.getElementById('fTitle').value,
@@ -335,17 +365,30 @@
                 date: document.getElementById('fDate').value,
                 time: document.getElementById('fTime').value,
                 link: document.getElementById('fLink').value,
-                submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9),
-                editedBy: editor // New field sent to sheet
+                submissionID: myID,
+                editedBy: editor // Sent to Column I
             };
-    
+        
             try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                // We use fetch with 'no-cors' for Google Apps Script usually
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload) 
+                });
+                
+                // Save to local storage only if it's a new post
+                if (!window.editingID) {
+                    let currentKeys = JSON.parse(localStorage.getItem('vui_keys') || "[]");
+                    currentKeys.push(myID);
+                    localStorage.setItem('vui_keys', JSON.stringify(currentKeys));
+                }
+                
                 location.reload();
             } catch (err) {
-                alert("Error submitting.");
+                alert("Error saving changes.");
                 btn.disabled = false;
-                btn.innerText = "POST PARTY";
+                btn.innerText = window.editingID ? "CONFIRM EDIT" : "POST PARTY";
             }
         }
     
