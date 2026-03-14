@@ -95,22 +95,11 @@
             text-decoration: none; font-weight: bold; transition: 0.2s;
         }
 
-       
-        @media (max-width: 480px) {
-            .chat-text { display: none; }
-            .floating-chat-btn { padding: 15px; border-radius: 50%; }
-        }
         @media (max-width: 768px) {
-            header { height: 180px !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; }
-            .header-content { flex-direction: column !important; align-items: center !important; gap: 5px !important; padding-bottom: 10px !important; }
-            header h1 { font-size: 1.4rem !important; margin: 0 !important; text-align: center !important; }
-            .header-controls { flex-direction: column !important; align-items: center !important; gap: 8px !important; }
-            .clock { font-size: 1.1rem !important; white-space: nowrap !important; }
-            .party-card { flex-direction: row !important; padding: 12px !important; gap: 10px !important; text-align: left !important; align-items: center !important; }
-            .party-card .party-info { flex-direction: row !important; gap: 10px !important; width: 100%; }
-            .party-card div[style*="min-width:90px"] { min-width: 65px !important; padding: 5px !important; }
-            .party-card strong { font-size: 1rem !important; }
-            .party-card small { font-size: 0.8rem !important; }
+            header { height: 180px !important; }
+            .header-content { flex-direction: column !important; align-items: center !important; gap: 5px !important; }
+            .party-card { flex-direction: row !important; padding: 12px !important; }
+            .party-card .party-info { gap: 10px !important; }
             .btn-join { min-width: 80px !important; padding: 8px 12px !important; font-size: 0.8rem !important; }
         }
 
@@ -180,7 +169,6 @@
                 <option value="10 PM">10:00 PM</option><option value="11 PM">11:00 PM</option>
             </select>
             <input type="text" id="fLink" placeholder="Room Link">
-            
             <input type="text" id="fEditor" placeholder="Your Name (Required)">
             
             <button class="btn-submit" id="modalSubmitBtn" style="width:100%; border-radius:8px; padding:12px;" onclick="submitParty()">POST PARTY</button>
@@ -235,13 +223,11 @@
 
                 data.forEach(p => {
                     const eventTime = new Date(p.date + "-2026 " + p.time);
-                    const midnightPT = new Date(p.date + "-2026 11:59:59 PM");
                     const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                    if (ptNow > midnightPT) return; 
+                    
+                    if (ptNow > new Date(p.date + "-2026 11:59:59 PM")) return; 
 
                     const isPast = ptNow > eventTime;
-                    const currentHourStr = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-                    const isLive = (currentHourStr === p.time.replace(':00', '')) && !isPast;
                     const isOfficial = (p.category === 'Official');
                     const themeColor = isPast ? '#444' : (isOfficial ? '#f1c40f' : '#00d4ff');
                     const themeBg = isPast ? 'rgba(50, 50, 50, 0.1)' : (isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)');
@@ -262,12 +248,12 @@
                                     <div style="color:#fff; font-weight:900; font-size:1.1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:4px; margin-top:4px;">${p.date}</div>
                                 </div>
                                 <div>
-                                    <strong style="color: #fff;">${p.title} ${isLive ? '<span class="live-badge">LIVE</span>' : ''}</strong>
+                                    <strong style="color: #fff;">${p.title}</strong>
                                     <small style="color: ${themeColor}; display:block;">Host/s: ${p.host}</small>
                                     ${editButtonsHtml}
                                 </div>
                             </div>
-                            ${p.link ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">${isPast ? 'ENDED' : 'JOIN'}</a>` : `<button class="btn-join" disabled style="background:#333;">NO LINK</button>`}
+                            <a href="${p.link || '#'}" target="_blank" class="btn-join" style="background:${btnColor}">${isPast ? 'ENDED' : 'JOIN'}</a>
                         </div>`;
                     if (isOfficial) offDiv.innerHTML += card;
                     else comDiv.innerHTML += card;
@@ -297,11 +283,17 @@
 
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
-            if (!editor) { return alert("Please enter your name."); }
-            const btn = document.getElementById('modalSubmitBtn');
-            if (btn.disabled) return;
+            if (!editor) return alert("Please enter your name.");
             
-            const myID = window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9);
+            const dateVal = document.getElementById('fDate').value; // YYYY-MM-DD
+            if (!dateVal) return alert("Please select a date.");
+
+            // Convert back to DD-MMM for Sheet
+            const d = new Date(dateVal + "T12:00:00");
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const formattedDate = d.getDate() + "-" + months[d.getMonth()];
+
+            const btn = document.getElementById('modalSubmitBtn');
             btn.innerText = "SAVING...";
             btn.disabled = true;
 
@@ -309,10 +301,10 @@
                 category: document.getElementById('fCategory').value,
                 title: document.getElementById('fTitle').value,
                 host: document.getElementById('fHost').value,
-                date: document.getElementById('fDate').value,
+                date: formattedDate,
                 time: document.getElementById('fTime').value,
                 link: document.getElementById('fLink').value,
-                submissionID: myID,
+                submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9),
                 editedBy: editor
             };
 
@@ -339,13 +331,8 @@
     </script>
 
     <footer style="margin-top: 50px; padding: 30px 10px; border-top: 1px solid #222; text-align: center; color: #444; font-size: 0.8rem;">
-        <div style="letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; color: #666;">
-            © 2026 VU Influencer Team
-        </div>
-        <div style="opacity: 0.6;">
-            Designed for the IMVU Community
-        </div>
+        <div style="letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; color: #666;">© 2026 VU Influencer Team</div>
+        <div style="opacity: 0.6;">Designed for the IMVU Community</div>
     </footer>
-
 </body>
 </html>
