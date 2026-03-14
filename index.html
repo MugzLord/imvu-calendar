@@ -67,6 +67,21 @@
             border: 1px solid #222; border-left: 6px solid #444;
         }
 
+        .live-badge {
+            background: #ff0000 !important;
+            color: white !important;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+            display: inline-block;
+            animation: blinker 1s linear infinite;
+        }
+        
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
         .official-card { border-left-color: var(--vui-gold); }
         .community-card { border-left-color: var(--community-blue); }
 
