@@ -183,7 +183,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // 1. SORTING
+                // 1. SORTING: Keeps them in order
                 data.sort((a, b) => {
                     const dateA = new Date(a.date + "-2026 " + a.time);
                     const dateB = new Date(b.date + "-2026 " + b.time);
@@ -194,10 +194,13 @@
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // 2. GET CURRENT PT DATE & TIME
+                // 2. GET CURRENT PT INFO FOR BADGE
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
+                const currentHour = ptNow.getHours();
+                const displayHour = currentHour % 12 || 12;
+                const ampm = currentHour >= 12 ? 'PM' : 'AM';
         
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
@@ -205,16 +208,14 @@
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
         
-                    // 3. LIVE LOGIC: Check Date + Time Range
-                    const startFull = new Date(p.date + "-2026 " + p.time);
-                    const endFull = p.endTime ? new Date(p.date + "-2026 " + p.endTime) : new Date(startFull.getTime() + 3600000);
-                    
+                    // 3. RESTORED LIVE BADGE: Checks if TODAY and if HOUR matches Start Time
                     const isToday = (p.date === todayStr);
-                    const isWithinTime = (ptNow >= startFull && ptNow <= endFull);
-                    const liveBadge = (isToday && isWithinTime) ? `<span class="live-badge">LIVE</span>` : "";
+                    const hourMatches = p.time.startsWith(displayHour + ":") && p.time.includes(ampm);
+                    const isLive = isToday && hourMatches;
+                    const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
         
-                    // 4. DISPLAY TIME RANGE (e.g., 10:00 AM - 1:00 PM)
-                    const timeDisplay = (p.endTime && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
+                    // 4. DISPLAY END TIME: Just shows the text from Column G
+                    const timeDisplay = (p.endTime && p.endTime !== "") ? `${p.time} - ${p.endTime}` : p.time;
         
                     let joinBtn = p.link && p.link.trim() !== "" 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
@@ -241,7 +242,7 @@
                     if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
                 });
             } catch (err) { console.error(err); }
-        }           
+        }     
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value; // 2026-03-14
