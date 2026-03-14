@@ -194,7 +194,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // Sort by date/time without hiding anything
+                // 1. Sort by date/time (No more filtering/hiding)
                 data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
         
                 const offDiv = document.getElementById('officialList');
@@ -205,14 +205,19 @@
         
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
+                    
+                    // Your original styling logic
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
         
-                    // RESTORED: Join Button Logic (Greyed out if no link)
-                    const joinButton = p.link && p.link.trim() !== "" 
-                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
-                        : `<button class="btn-join" disabled style="background:#333; cursor:not-allowed; opacity:0.5;">NO LINK</button>`;
+                    // 2. RESTORED: Join Button Logic (Grey if no link)
+                    let joinBtnHtml = "";
+                    if (p.link && p.link.trim() !== "") {
+                        joinBtnHtml = `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`;
+                    } else {
+                        joinBtnHtml = `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
+                    }
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
@@ -224,13 +229,19 @@
                                 <div>
                                     <strong style="color: #fff; font-size:1.1rem;">${p.title}</strong>
                                     <small style="color: ${themeColor}; display:block;">Host: ${p.host}</small>
+                                    
                                     <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
-                                        <button onclick="deleteParty('${p.submissionID}')" class="btn-delete">DELETE</button>
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}')" 
+                                                style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">
+                                            EDIT
+                                        </button>
+                                        <button onclick="deleteParty('${p.submissionID}')" class="btn-delete">
+                                            DELETE
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            ${joinButton}
+                            ${joinBtnHtml}
                         </div>`;
                     
                     if (isOfficial) offDiv.innerHTML += card;
