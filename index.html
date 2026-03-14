@@ -181,12 +181,17 @@
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
+
+                const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+                const hourOnly = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
         
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
+                    const isLive = p.time.includes(hourOnly);
+                    const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
         
                     let joinBtn = p.link && p.link.trim() !== "" 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
