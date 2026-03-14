@@ -183,7 +183,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // 1. SORTING
+                // 1. SORTING: Chronological order
                 data.sort((a, b) => {
                     const dateA = new Date(a.date + "-2026 " + a.time);
                     const dateB = new Date(b.date + "-2026 " + b.time);
@@ -194,8 +194,14 @@
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // 2. GET CURRENT PT TIME (Hour and AM/PM separately for better matching)
+                // 2. GET CURRENT PT DATE & TIME
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+                
+                // Create "14-Mar" format
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
+                
+                // Create "10 AM" format
                 const currentHour = ptNow.getHours();
                 const displayHour = currentHour % 12 || 12;
                 const ampm = currentHour >= 12 ? 'PM' : 'AM';
@@ -206,9 +212,11 @@
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
         
-                    // 3. IMPROVED LIVE CHECK
-                    // This checks if the party time starts with the current hour AND matches the AM/PM
-                    const isLive = p.time.startsWith(displayHour + ":") && p.time.includes(ampm);
+                    // 3. STRICT LIVE CHECK: Date MUST match AND Time MUST match
+                    const dateMatches = (p.date === todayStr);
+                    const timeMatches = p.time.startsWith(displayHour + ":") && p.time.includes(ampm);
+                    
+                    const isLive = dateMatches && timeMatches;
                     const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
         
                     let joinBtn = p.link && p.link.trim() !== "" 
