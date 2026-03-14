@@ -276,14 +276,14 @@
             } catch (err) { alert("Error"); btn.disabled = false; }
         }
 
-        function openEdit(id, title, host, link, category, date, time) {
+        function openEdit(id, title, host, link, category, date, time, endTime) {
             window.editingID = id;
             document.getElementById('fTitle').value = title;
             document.getElementById('fHost').value = host;
             document.getElementById('fLink').value = link;
             document.getElementById('fCategory').value = category;
             document.getElementById('fTime').value = time;
-            
+            document.getElementById('fEndTime').value = endTime || ""; // NEW
             // Translate back for the date picker: 14-Mar -> 2026-03-14
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const p = date.split('-');
