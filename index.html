@@ -125,7 +125,6 @@
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // Current PT Time
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
@@ -134,9 +133,8 @@
                     const isOfficial = p.category.includes('Official');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     
-                    // --- TIME & STATE LOGIC ---
+                    // TIME LOGIC
                     const startFull = new Date(p.date + "-2026 " + p.time);
-                    // Default to 1 hour after start if no end time is provided
                     const hasEnd = (p.endTime && String(p.endTime).trim() !== "" && String(p.endTime) !== "undefined");
                     const endFull = hasEnd ? new Date(p.date + "-2026 " + p.endTime) : new Date(startFull.getTime() + 3600000);
                     
@@ -147,36 +145,37 @@
                     const timeDisplay = hasEnd ? `${p.time} - ${p.endTime}` : p.time;
                     const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
         
-                    // --- BUTTON LOGIC (JOIN vs ENDED vs NO LINK) ---
+                    // JOIN / ENDED BUTTON
                     const linkVal = String(p.link || "").trim();
                     const hasValidLink = linkVal.startsWith("http");
         
                     let joinBtnHTML = "";
-        
                     if (isPast) {
-                        // State: Party is over
                         joinBtnHTML = `<button class="btn-join" disabled style="background:#222 !important; color:#555 !important; cursor:not-allowed; border:1px solid #333; display:block; width:100%;">ENDED</button>`;
                     } else if (!hasValidLink) {
-                        // State: Future party but no link provided
                         joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#777 !important; opacity:0.5; cursor:not-allowed; border:1px solid #444; display:block; width:100%;">NO LINK</button>`;
                     } else {
-                        // State: Future/Live party with a link
                         joinBtnHTML = `<a href="${linkVal}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:block; text-decoration:none; color:white; text-align:center;">JOIN</a>`;
                     }
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:12px; border-radius:15px; background:#1a1a1a; border-left:5px solid ${themeColor}; gap:10px; opacity: ${isPast ? '0.6' : '1'};">
-                            <div style="display:flex; align-items:center; gap:15px; flex:1; min-width:0;">
-                                <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:8px; border-radius:10px; min-width:110px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
-                                    <div style="color:${isPast ? '#666' : themeColor}; font-weight:bold; font-size:0.65rem;">${timeDisplay}</div>
+                            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
+                                <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:6px; border-radius:10px; min-width:100px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
+                                    <div style="color:${isPast ? '#666' : themeColor}; font-weight:bold; font-size:0.6rem;">${timeDisplay}</div>
                                     <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.9rem;">${p.date}</div>
                                 </div>
                                 <div style="min-width:0; flex:1;">
-                                    <strong style="color:${isPast ? '#888' : '#fff'}; font-size:1rem; display:block;">${p.title}${liveBadge}</strong>
-                                    <div style="color:${isPast ? '#666' : themeColor}; font-size:0.75rem;">Host: ${p.host}</div>
+                                    <strong style="color:${isPast ? '#888' : '#fff'}; font-size:0.95rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}${liveBadge}</strong>
+                                    <div style="color:${isPast ? '#666' : themeColor}; font-size:0.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Host: ${p.host}</div>
+                                    
+                                    <div style="margin-top:6px; display:flex; gap:8px;">
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.6rem; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:bold;">EDIT</button>
+                                        <button onclick="deleteParty('${p.submissionID}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.6rem; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:bold;">DELETE</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div style="flex-shrink:0; min-width:110px;">
+                            <div style="flex-shrink:0; min-width:100px;">
                                 ${joinBtnHTML}
                             </div>
                         </div>`;
