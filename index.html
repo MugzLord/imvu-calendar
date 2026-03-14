@@ -139,11 +139,9 @@
                     const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
                     const displayTime = (p.endTime && p.endTime !== "undefined" && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
         
-                    // --- THE STRICTOR LINK CHECK ---
-                    const rawLink = String(p.link || "").trim();
-                    
-                    // This version is safer: if it's not empty and doesn't say "undefined", it counts as a link
-                    const hasValidLink = rawLink !== "" && rawLink !== "undefined" && rawLink !== "null";
+                    // --- THE FIX: Works even if Sheet header is 'Link' or 'link' ---
+                    const rawLink = (p.link || p.Link || "").toString().trim();
+                    const hasValidLink = rawLink.length > 5 && rawLink !== "undefined";
         
                     let joinBtn = hasValidLink 
                         ? `<a href="${rawLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:inline-block;">JOIN</a>`
