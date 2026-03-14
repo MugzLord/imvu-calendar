@@ -14,18 +14,15 @@
         }
 
         body { 
-            background-color: var(--bg-dark); 
-            color: #e0e0e0; 
+            background-color: var(--bg-dark); color: #e0e0e0; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 15px;
-            line-height: 1.6;
+            margin: 0; padding: 15px; line-height: 1.6;
         }
 
         header { 
             position: relative; overflow: hidden; height: 160px; 
             display: flex; align-items: flex-end; border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 15px; 
-            background-color: #000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 15px; background-color: #000;
         }
 
         .header-bg {
@@ -40,12 +37,11 @@
         }
 
         .header-content {
-            position: relative; z-index: 3; width: 100%; 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 25px 15px 25px;
+            position: relative; z-index: 3; width: 100%; display: flex; 
+            justify-content: space-between; align-items: center; padding: 0 25px 15px 25px;
         }
 
-        .clock { color: var(--community-blue); font-weight: bold; font-size: 1.4rem; text-shadow: 0 0 10px rgba(0,212,255,0.4); }
+        .clock { color: var(--community-blue); font-weight: bold; font-size: 1.4rem; }
 
         .btn-submit {
             background: linear-gradient(45deg, var(--vui-gold), #d4af37);
@@ -57,16 +53,11 @@
 
         .tab-btn {
             flex: 1; background: #1a1a1a; color: #888; border: 1px solid #333;
-            padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s;
+            padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer;
         }
         
-        .tab-btn.active.gold-tab {
-            background: rgba(241, 196, 15, 0.1); color: var(--vui-gold); border-color: var(--vui-gold);
-        }
-        
-        .tab-btn.active.blue-tab {
-            background: rgba(0, 212, 255, 0.1); color: var(--community-blue); border-color: var(--community-blue);
-        }
+        .tab-btn.active.gold-tab { background: rgba(241, 196, 15, 0.1); color: var(--vui-gold); border-color: var(--vui-gold); }
+        .tab-btn.active.blue-tab { background: rgba(0, 212, 255, 0.1); color: var(--community-blue); border-color: var(--community-blue); }
 
         .party-list { display: flex; flex-direction: column; gap: 15px; }
 
@@ -84,21 +75,12 @@
         .btn-join { 
             min-width: 130px; text-align: center; background: var(--vui-purple); 
             color: white; border: none; padding: 12px 20px; border-radius: 10px; 
-            text-decoration: none; font-weight: bold; transition: 0.2s;
-        }
-
-        @media (max-width: 768px) {
-            header { height: 180px !important; }
-            .header-content { flex-direction: column !important; align-items: center !important; }
-            .party-card { flex-direction: row !important; padding: 12px !important; }
-            .party-card .party-info { gap: 10px !important; }
-            .btn-join { min-width: 80px !important; padding: 8px 12px !important; }
+            text-decoration: none; font-weight: bold;
         }
 
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; }
         .modal-content { background:#1e1e1e; padding:25px; border-radius:15px; width:90%; max-width:380px; }
         .modal-content input, .modal-content select { width:100%; margin:10px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing:border-box; }
-        .btn-delete { background: none; border: 1px solid #444; color: #666; font-size: 0.6rem; padding: 2px 6px; cursor: pointer; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -161,11 +143,9 @@
         function updateClock() {
             const now = new Date();
             const ptTime = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
-            const clockEl = document.getElementById('ptClock');
-            if(clockEl) clockEl.innerText = ptTime + ' PT';
+            document.getElementById('ptClock').innerText = ptTime + ' PT';
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
 
         function switchTab(cat) {
             document.getElementById('officialLane').style.display = (cat === 'Official') ? 'block' : 'none';
@@ -176,49 +156,31 @@
 
         function toggleModal() {
             const m = document.getElementById('modalOverlay');
-            const isOpening = m.style.display !== 'flex';
-            m.style.display = isOpening ? 'flex' : 'none';
-            if (!isOpening) {
+            if (m.style.display === 'flex') {
+                m.style.display = 'none';
                 window.editingID = null;
-                document.getElementById('fTitle').value = "";
-                document.getElementById('fHost').value = "";
-                document.getElementById('fLink').value = "";
-                document.getElementById('fDate').value = "";
-                document.getElementById('fEditor').value = "";
                 document.getElementById('modalSubmitBtn').innerText = "POST PARTY";
-            }
+            } else { m.style.display = 'flex'; }
         }
 
         async function loadParties() {
             try {
                 const response = await fetch(API_URL);
-                let data = await response.json();
-        
-                // 1. Sort by date/time (No more filtering/hiding)
-                data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
-        
+                const data = await response.json();
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
-                
-                if(!offDiv || !comDiv) return;
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
-        
+
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
-                    
-                    // Your original styling logic
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
-        
-                    // 2. RESTORED: Join Button Logic (Grey if no link)
-                    let joinBtnHtml = "";
-                    if (p.link && p.link.trim() !== "") {
-                        joinBtnHtml = `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`;
-                    } else {
-                        joinBtnHtml = `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
-                    }
-        
+
+                    let joinBtn = p.link && p.link.trim() !== "" 
+                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
+                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5;">NO LINK</button>`;
+
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
                             <div class="party-info">
@@ -229,66 +191,37 @@
                                 <div>
                                     <strong style="color: #fff; font-size:1.1rem;">${p.title}</strong>
                                     <small style="color: ${themeColor}; display:block;">Host: ${p.host}</small>
-                                    
                                     <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}')" 
-                                                style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">
-                                            EDIT
-                                        </button>
-                                        <button onclick="deleteParty('${p.submissionID}')" class="btn-delete">
-                                            DELETE
-                                        </button>
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
+                                        <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">DELETE</button>
                                     </div>
                                 </div>
                             </div>
-                            ${joinBtnHtml}
+                            ${joinBtn}
                         </div>`;
-                    
-                    if (isOfficial) offDiv.innerHTML += card;
-                    else comDiv.innerHTML += card;
+                    if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
                 });
-            } catch (err) { 
-                console.error("Load failed:", err);
-            }
-        }
-
-        function openEdit(id, title, host, link, category, date, time) {
-            window.editingID = id;
-            document.getElementById('fCategory').value = category;
-            document.getElementById('fTitle').value = title;
-            document.getElementById('fHost').value = host;
-            document.getElementById('fLink').value = link;
-            document.getElementById('fTime').value = time.includes(':') ? time : time.replace(' AM', ':00 AM').replace(' PM', ':00 PM');
-            
-            if (date) {
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const parts = date.split('-'); 
-                const month = (monthNames.indexOf(parts[1]) + 1).toString().padStart(2, '0');
-                document.getElementById('fDate').value = `2026-${month}-${parts[0].padStart(2, '0')}`;
-            }
-            document.getElementById('modalSubmitBtn').innerText = "CONFIRM EDIT";
-            document.getElementById('modalOverlay').style.display = 'flex';
+            } catch (err) { console.error(err); }
         }
 
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
-            const dateVal = document.getElementById('fDate').value;
-            if (!editor || !dateVal) return alert("Please fill in your name and date.");
-            
-            const btn = document.getElementById('modalSubmitBtn');
-            btn.innerText = "SAVING...";
-            btn.disabled = true;
+            const dateVal = document.getElementById('fDate').value; // 2026-03-14
+            if (!editor || !dateVal) return alert("Fill in name and date!");
 
-            // Convert date to DD-MMM
+            // TRANSLATOR: 2026-03-14 -> 14-Mar
             const d = new Date(dateVal + "T12:00:00");
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const formattedDate = d.getDate() + "-" + months[d.getMonth()];
+            const sheetDate = d.getDate() + "-" + months[d.getMonth()];
+
+            const btn = document.getElementById('modalSubmitBtn');
+            btn.innerText = "SAVING..."; btn.disabled = true;
 
             const payload = {
                 category: document.getElementById('fCategory').value,
                 title: document.getElementById('fTitle').value,
                 host: document.getElementById('fHost').value,
-                date: formattedDate,
+                date: sheetDate,
                 time: document.getElementById('fTime').value,
                 link: document.getElementById('fLink').value,
                 submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9),
@@ -298,19 +231,35 @@
             try {
                 await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 setTimeout(() => location.reload(), 1500);
-            } catch (err) { alert("Error."); btn.disabled = false; }
+            } catch (err) { alert("Error"); btn.disabled = false; }
+        }
+
+        function openEdit(id, title, host, link, category, date, time) {
+            window.editingID = id;
+            document.getElementById('fTitle').value = title;
+            document.getElementById('fHost').value = host;
+            document.getElementById('fLink').value = link;
+            document.getElementById('fCategory').value = category;
+            document.getElementById('fTime').value = time;
+            
+            // Translate back for the date picker: 14-Mar -> 2026-03-14
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const p = date.split('-');
+            const m = (months.indexOf(p[1]) + 1).toString().padStart(2, '0');
+            document.getElementById('fDate').value = `2026-${m}-${p[0].padStart(2, '0')}`;
+
+            document.getElementById('modalSubmitBtn').innerText = "CONFIRM EDIT";
+            document.getElementById('modalOverlay').style.display = 'flex';
         }
 
         async function deleteParty(id) {
-            const name = prompt("Enter your name to delete:");
-            if (!name) return;
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", submissionID: id, editedBy: name }) });
-                setTimeout(() => location.reload(), 1500);
-            } catch (err) { alert("Error."); }
+            const n = prompt("Your name:"); if(!n) return;
+            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", submissionID: id, editedBy: n }) });
+            location.reload();
         }
 
         loadParties();
     </script>
+
 </body>
 </html>
