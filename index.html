@@ -194,13 +194,13 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // SORTING ONLY (Removed the filter that was hiding your events)
+                // Sort by date/time without hiding anything
                 data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
         
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 
-                if(!offDiv || !comDiv) return; // Safety check
+                if(!offDiv || !comDiv) return;
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
                 data.forEach(p => {
@@ -208,6 +208,11 @@
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
+        
+                    // RESTORED: Join Button Logic (Greyed out if no link)
+                    const joinButton = p.link && p.link.trim() !== "" 
+                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
+                        : `<button class="btn-join" disabled style="background:#333; cursor:not-allowed; opacity:0.5;">NO LINK</button>`;
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
@@ -225,7 +230,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="${p.link || '#'}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>
+                            ${joinButton}
                         </div>`;
                     
                     if (isOfficial) offDiv.innerHTML += card;
@@ -233,7 +238,6 @@
                 });
             } catch (err) { 
                 console.error("Load failed:", err);
-                alert("Could not load parties. Check your API_URL or Sheet permissions.");
             }
         }
 
