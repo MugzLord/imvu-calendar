@@ -125,57 +125,59 @@
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // 2. GET CURRENT PT TIME
+                // 2. GET CURRENT PT INFO
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
-                const curHour = ptNow.getHours() % 12 || 12;
-                const ampm = ptNow.getHours() >= 12 ? 'PM' : 'AM';
         
                 data.forEach(p => {
                     const isOfficial = p.category.includes('Official');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     
-                    const isLive = (p.date === todayStr && p.time.startsWith(curHour + ":") && p.time.includes(ampm));
-                    const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
-                    const displayTime = (p.endTime && String(p.endTime).trim() !== "" && String(p.endTime) !== "undefined") ? `${p.time} - ${p.endTime}` : p.time;
+                    // --- RESTORED LIVE LOGIC ---
+                    // Create actual Date objects to compare the time range
+                    const startFull = new Date(p.date + "-2026 " + p.time);
+                    // If no end time, assume 1 hour duration for the badge
+                    const endFull = (p.endTime && p.endTime !== "undefined" && p.endTime.trim() !== "") 
+                                    ? new Date(p.date + "-2026 " + p.endTime) 
+                                    : new Date(startFull.getTime() + 3600000);
+                    
+                    const isToday = (p.date === todayStr);
+                    const isWithinTime = (ptNow >= startFull && ptNow <= endFull);
+                    const liveBadge = (isToday && isWithinTime) ? `<span class="live-badge">LIVE</span>` : "";
+                    
+                    // --- RESTORED END TIME (ETD) DISPLAY ---
+                    const displayTime = (p.endTime && String(p.endTime) !== "undefined" && String(p.endTime).trim() !== "") 
+                                        ? `${p.time} - ${p.endTime}` 
+                                        : p.time;
         
-                    // --- THE FIX: MANUAL LINK VALIDATION ---
-                    let finalLink = "";
-                    let canJoin = false;
-        
-                    // Check if link exists and isn't just the word "undefined"
-                    if (p.link && String(p.link).trim() !== "" && String(p.link) !== "undefined" && String(p.link) !== "null") {
-                        finalLink = String(p.link).trim();
-                        canJoin = true;
-                    }
-        
-                    let joinBtn = "";
-                    if (canJoin) {
-                        // Enabled Button
-                        joinBtn = `<a href="${finalLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:block;">JOIN</a>`;
+                    // --- JOIN BUTTON LOGIC ---
+                    let joinBtnHTML = "";
+                    if (p.link && String(p.link).length > 5 && String(p.link) !== "undefined") {
+                        joinBtnHTML = `<a href="${p.link.trim()}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:block; text-decoration:none;">JOIN</a>`;
                     } else {
-                        // Disabled Button
-                        joinBtn = `<button class="btn-join" disabled style="background:#333 !important; opacity:0.5; cursor:not-allowed; color:#777 !important; border:1px solid #444; display:block;">NO LINK</button>`;
+                        joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#666 !important; opacity:0.5; cursor:not-allowed; border:1px solid #444; display:block;">NO LINK</button>`;
                     }
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:12px; border-radius:15px; background:#1a1a1a; border-left:5px solid ${themeColor}; gap:10px;">
                             <div style="display:flex; align-items:center; gap:15px; flex:1; min-width:0;">
-                                <div style="border:1px solid ${themeColor}; padding:8px; border-radius:10px; min-width:85px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
+                                <div style="border:1px solid ${themeColor}; padding:8px; border-radius:10px; min-width:110px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
                                     <div style="color:${themeColor}; font-weight:bold; font-size:0.65rem;">${displayTime}</div>
                                     <div style="color:#fff; font-weight:bold; font-size:0.9rem;">${p.date}</div>
                                 </div>
                                 <div style="min-width:0; flex:1;">
-                                    <strong style="color:#fff; font-size:1rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}${liveBadge}</strong>
-                                    <div style="color:${themeColor}; font-size:0.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Host: ${p.host}</div>
+                                    <strong style="color:#fff; font-size:1.1rem; display:block;">${p.title}${liveBadge}</strong>
+                                    <div style="color:${themeColor}; font-size:0.75rem;">Host: ${p.host}</div>
                                     <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${finalLink}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">EDIT</button>
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">EDIT</button>
                                         <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">DELETE</button>
                                     </div>
                                 </div>
                             </div>
-                            <div style="flex-shrink:0; min-width:120px;">${joinBtn}</div>
+                            <div style="flex-shrink:0; min-width:120px; text-align:right;">
+                                ${joinBtnHTML}
+                            </div>
                         </div>`;
                     if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
                 });
