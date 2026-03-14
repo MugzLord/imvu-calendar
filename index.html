@@ -183,7 +183,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // 1. SORTING: Arranges by Date and Time
+                // 1. SORTING
                 data.sort((a, b) => {
                     const dateA = new Date(a.date + "-2026 " + a.time);
                     const dateB = new Date(b.date + "-2026 " + b.time);
@@ -194,9 +194,11 @@
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // 2. GET CURRENT PT HOUR (e.g., "10 AM")
+                // 2. GET CURRENT PT TIME (Hour and AM/PM separately for better matching)
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                const hourOnly = ptNow.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+                const currentHour = ptNow.getHours();
+                const displayHour = currentHour % 12 || 12;
+                const ampm = currentHour >= 12 ? 'PM' : 'AM';
         
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
@@ -204,14 +206,14 @@
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
         
-                    // 3. LIVE CHECK: If the party hour matches the current PT hour
-                    // We check if the party time string contains the current hour (e.g., "10 AM")
-                    const isLive = p.time.includes(hourOnly);
+                    // 3. IMPROVED LIVE CHECK
+                    // This checks if the party time starts with the current hour AND matches the AM/PM
+                    const isLive = p.time.startsWith(displayHour + ":") && p.time.includes(ampm);
                     const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
         
                     let joinBtn = p.link && p.link.trim() !== "" 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
-                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5;">NO LINK</button>`;
+                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
