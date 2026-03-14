@@ -25,26 +25,40 @@
         .tab-btn.active.blue-tab { color: var(--community-blue); border-color: var(--community-blue); background: rgba(0, 212, 255, 0.1); }
 
         .party-card { 
-            background: var(--card-bg); padding: 15px; border-radius: 15px; 
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; 
-            border-left: 5px solid #444; margin-bottom: 12px; gap: 15px;
+            background: var(--card-bg); padding: 12px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-left: 5px solid #444; margin-bottom: 12px; gap: 10px;
         }
         .official-card { border-left-color: var(--vui-gold); }
         .community-card { border-left-color: var(--community-blue); }
 
-        .party-main { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 250px; }
+        .live-badge {
+            background: #ff0000 !important;
+            color: white !important;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-weight: bold;
+            display: inline-block !important;
+            animation: blinker 1s linear infinite;
+            vertical-align: middle;
+        }
         
-        .time-box { 
-            background: rgba(255,255,255,0.03); padding: 8px; border-radius: 10px; 
-            border: 1px solid #333; min-width: 100px; text-align: center; 
+        @keyframes blinker {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
-        .live-badge { background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; margin-left: 5px; animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
-
+        /* FIXED BUTTON WIDTH FOR MOBILE */
         .btn-join { 
-            width: 100%; max-width: 120px; text-align: center; color: white; 
-            border: none; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; 
+            width: 85px !important; 
+            min-width: 85px !important;
+            text-align: center; color: white; 
+            border: none; padding: 10px 5px; border-radius: 8px; 
+            text-decoration: none; font-weight: bold; font-size: 0.8rem;
+            flex-shrink: 0;
         }
 
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
@@ -93,6 +107,7 @@
     </div></div>
 
     <script>
+        // UPDATED API URL FROM YOUR PREVIOUS CODE
         const API_URL = 'https://script.google.com/macros/s/AKfycbwQmcOYVKlpCW_OTvvadmS3D1izb7Ad_XTgeUPLDcnVUmrlNg8J0z-75_04eKFf_kixGQ/exec';
 
         function updateClock() {
@@ -117,23 +132,22 @@
             try {
                 const response = await fetch(API_URL);
                 let data = await response.json();
-        
-                // 1. Sort by Date/Time
+                
+                // 1. Correct sorting
                 data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
-        
+
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
-        
+                
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
-        
+
                 data.forEach(p => {
                     const isOfficial = p.category.includes('Official');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     
-                    // TIME LOGIC
                     const startFull = new Date(p.date + "-2026 " + p.time);
                     const hasEnd = (p.endTime && String(p.endTime).trim() !== "" && String(p.endTime) !== "undefined");
                     const endFull = hasEnd ? new Date(p.date + "-2026 " + p.endTime) : new Date(startFull.getTime() + 3600000);
@@ -141,41 +155,41 @@
                     const isToday = (p.date === todayStr);
                     const isLive = (isToday && ptNow >= startFull && ptNow <= endFull);
                     const isPast = (ptNow > endFull);
-        
+
                     const timeDisplay = hasEnd ? `${p.time} - ${p.endTime}` : p.time;
                     const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
-        
-                    // JOIN / ENDED BUTTON
+                    
                     const linkVal = String(p.link || "").trim();
                     const hasValidLink = linkVal.startsWith("http");
-        
+
                     let joinBtnHTML = "";
                     if (isPast) {
-                        joinBtnHTML = `<button class="btn-join" disabled style="background:#222 !important; color:#555 !important; cursor:not-allowed; border:1px solid #333; display:block; width:100%;">ENDED</button>`;
+                        joinBtnHTML = `<button class="btn-join" disabled style="background:#222 !important; color:#555 !important; border:1px solid #333;">ENDED</button>`;
                     } else if (!hasValidLink) {
-                        joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#777 !important; opacity:0.5; cursor:not-allowed; border:1px solid #444; display:block; width:100%;">NO LINK</button>`;
+                        joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#777 !important; opacity:0.5; border:1px solid #444;">NO LINK</button>`;
                     } else {
-                        joinBtnHTML = `<a href="${linkVal}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:block; text-decoration:none; color:white; text-align:center;">JOIN</a>`;
+                        joinBtnHTML = `<a href="${linkVal}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'};">JOIN</a>`;
                     }
-        
+
                     const card = `
-                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:12px; border-radius:15px; background:#1a1a1a; border-left:5px solid ${themeColor}; gap:10px; opacity: ${isPast ? '0.6' : '1'};">
-                            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
-                                <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:6px; border-radius:10px; min-width:100px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
+                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="opacity: ${isPast ? '0.6' : '1'};">
+                            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+                                <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:6px; border-radius:10px; min-width:95px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
                                     <div style="color:${isPast ? '#666' : themeColor}; font-weight:bold; font-size:0.6rem;">${timeDisplay}</div>
-                                    <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.9rem;">${p.date}</div>
+                                    <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.85rem;">${p.date}</div>
                                 </div>
+                                
                                 <div style="min-width:0; flex:1;">
-                                    <strong style="color:${isPast ? '#888' : '#fff'}; font-size:0.95rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}${liveBadge}</strong>
-                                    <div style="color:${isPast ? '#666' : themeColor}; font-size:0.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Host: ${p.host}</div>
-                                    
-                                    <div style="margin-top:6px; display:flex; gap:8px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.6rem; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:bold;">EDIT</button>
-                                        <button onclick="deleteParty('${p.submissionID}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.6rem; padding:4px 8px; cursor:pointer; border-radius:4px; font-weight:bold;">DELETE</button>
+                                    <strong style="color:${isPast ? '#888' : '#fff'}; font-size:0.95rem; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}${liveBadge}</strong>
+                                    <div style="color:${isPast ? '#666' : themeColor}; font-size:0.75rem; word-wrap: break-word;">Host: ${p.host}</div>
+                                    <div style="margin-top:6px; display:flex; gap:6px;">
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.55rem; padding:3px 6px; cursor:pointer; border-radius:4px; font-weight:bold;">EDIT</button>
+                                        <button onclick="deleteParty('${p.submissionID}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.55rem; padding:3px 6px; cursor:pointer; border-radius:4px; font-weight:bold;">DELETE</button>
                                     </div>
                                 </div>
                             </div>
-                            <div style="flex-shrink:0; min-width:100px;">
+                            
+                            <div style="flex-shrink:0;">
                                 ${joinBtnHTML}
                             </div>
                         </div>`;
@@ -183,12 +197,14 @@
                 });
             } catch (err) { console.error(err); }
         }
+
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value;
             if (!editor || !dateVal) return alert("Fill Name and Date!");
             const d = new Date(dateVal + "T12:00:00");
-            const sheetDate = d.getDate() + "-" + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const sheetDate = d.getDate() + "-" + months[d.getMonth()];
             document.getElementById('modalSubmitBtn').innerText = "SAVING...";
             const payload = { category: document.getElementById('fCategory').value, title: document.getElementById('fTitle').value, host: document.getElementById('fHost').value, date: sheetDate, time: document.getElementById('fTime').value, endTime: document.getElementById('fEndTime').value, link: document.getElementById('fLink').value, submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9), editedBy: editor };
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(() => location.reload());
@@ -196,7 +212,12 @@
 
         function openEdit(id, title, host, link, cat, date, time, end) {
             window.editingID = id;
-            document.getElementById('fTitle').value = title; document.getElementById('fHost').value = host; document.getElementById('fLink').value = (link === "undefined") ? "" : link; document.getElementById('fCategory').value = cat; document.getElementById('fTime').value = time; document.getElementById('fEndTime').value = (end === "undefined") ? "" : end;
+            document.getElementById('fTitle').value = title; 
+            document.getElementById('fHost').value = host; 
+            document.getElementById('fLink').value = (link === "undefined") ? "" : link; 
+            document.getElementById('fCategory').value = cat; 
+            document.getElementById('fTime').value = time; 
+            document.getElementById('fEndTime').value = (end === "undefined") ? "" : end;
             document.getElementById('modalSubmitBtn').innerText = "CONFIRM EDIT";
             toggleModal();
         }
