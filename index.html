@@ -67,25 +67,17 @@
             border: 1px solid #222; border-left: 6px solid #444;
         }
 
-        .live-badge {
-            background: #ff0000 !important;
-            color: white !important;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-left: 10px;
-            display: inline-block;
-            animation: blinker 1s linear infinite;
-        }
-        
-        @keyframes blinker {
-            50% { opacity: 0; }
-        }
         .official-card { border-left-color: var(--vui-gold); }
         .community-card { border-left-color: var(--community-blue); }
 
         .party-info { display: flex; align-items: center; gap: 25px; }
+
+        .live-badge {
+            background: #ff0000; color: white; font-size: 0.65rem; padding: 2px 8px;
+            border-radius: 4px; font-weight: bold; margin-left: 10px;
+            animation: blinker 1s linear infinite; vertical-align: middle;
+        }
+        @keyframes blinker { 50% { opacity: 0; } }
 
         .btn-join { 
             min-width: 130px; text-align: center; background: var(--vui-purple); 
@@ -94,8 +86,9 @@
         }
 
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; }
-        .modal-content { background:#1e1e1e; padding:25px; border-radius:15px; width:90%; max-width:380px; }
-        .modal-content input, .modal-content select { width:100%; margin:10px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing:border-box; }
+        .modal-content { background:#1e1e1e; padding:25px; border-radius:15px; width:90%; max-width:380px; max-height: 90vh; overflow-y: auto; }
+        .modal-content input, .modal-content select { width:100%; margin:8px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing:border-box; }
+        label { font-size: 0.75rem; color: #888; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
@@ -130,6 +123,8 @@
             <input type="text" id="fTitle" placeholder="Party Title">
             <input type="text" id="fHost" placeholder="Host/s">
             <input type="date" id="fDate">
+            
+            <label>Start Time</label>
             <select id="fTime">
                 <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option>
                 <option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option>
@@ -144,10 +139,28 @@
                 <option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option>
                 <option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
             </select>
+
+            <label>End Time</label>
+            <select id="fEndTime">
+                <option value="">No End Time</option>
+                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option>
+                <option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option>
+                <option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option>
+                <option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option>
+                <option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option>
+                <option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option>
+                <option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option>
+                <option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option>
+                <option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option>
+                <option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+            </select>
+
             <input type="text" id="fLink" placeholder="Room Link">
             <input type="text" id="fEditor" placeholder="Your Name (Required)">
             
-            <button class="btn-submit" id="modalSubmitBtn" style="width:100%; border-radius:8px; padding:12px;" onclick="submitParty()">POST PARTY</button>
+            <button class="btn-submit" id="modalSubmitBtn" style="width:100%;" onclick="submitParty()">POST PARTY</button>
             <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; cursor:pointer;">Cancel</button>
         </div>
     </div>
@@ -182,59 +195,44 @@
             try {
                 const response = await fetch(API_URL);
                 let data = await response.json();
-        
-                // 1. SORTING: Arranges by Date and Time
-                data.sort((a, b) => {
-                    const dateA = new Date(a.date + "-2026 " + a.time);
-                    const dateB = new Date(b.date + "-2026 " + b.time);
-                    return dateA - dateB;
-                });
-        
+
+                data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
+
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
-        
-                // 2. GET CURRENT PT INFO FOR BADGE
+
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
-                const currentHour = ptNow.getHours();
-                const displayHour = currentHour % 12 || 12;
-                const ampm = currentHour >= 12 ? 'PM' : 'AM';
-        
+                const curHour = ptNow.getHours() % 12 || 12;
+                const ampm = ptNow.getHours() >= 12 ? 'PM' : 'AM';
+
                 data.forEach(p => {
-                    const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
-                    const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
-                    const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
-                    const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
-        
-                    // 3. LIVE BADGE: Only Today + Matching Hour
-                    const isToday = (p.date === todayStr);
-                    const hourMatches = p.time.startsWith(displayHour + ":") && p.time.includes(ampm);
-                    const isLive = isToday && hourMatches;
-                    const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
-        
-                    // 4. DISPLAY TIME RANGE
-                    const timeDisplay = (p.endTime && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
-        
-                    // 5. RESTORED JOIN BUTTON LOGIC (FIXED)
+                    const isOfficial = p.category.includes('Official');
+                    const color = isOfficial ? '#f1c40f' : '#00d4ff';
+                    const bg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
+                    
+                    const isLive = (p.date === todayStr && p.time.startsWith(curHour + ":") && p.time.includes(ampm));
+                    const badge = isLive ? `<span class="live-badge">LIVE</span>` : "";
+                    const timeDisp = (p.endTime && p.endTime !== "") ? `${p.time} - ${p.endTime}` : p.time;
+
                     let joinBtn = p.link && p.link.trim() !== "" 
-                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
+                        ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}">JOIN</a>`
                         : `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
-        
+
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
                             <div class="party-info">
-                                <div style="background:${themeBg}; padding:10px; border-radius:10px; border: 1px solid ${themeColor}; min-width:115px; text-align:center;">
-                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.7rem;">${timeDisplay}</div>
+                                <div style="background:${bg}; padding:10px; border-radius:10px; border: 1px solid ${color}; min-width:115px; text-align:center;">
+                                    <div style="color:${color}; font-weight:bold; font-size:0.7rem;">${timeDisp}</div>
                                     <div style="color:#fff; font-weight:900; font-size:1.1rem;">${p.date}</div>
                                 </div>
                                 <div>
-                                    <strong style="color: #fff; font-size:1.1rem;">${p.title} ${liveBadge}</strong>
-                                    <small style="color: ${themeColor}; display:block;">Host: ${p.host}</small>
-                                    <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime || ""}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
-                                        <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">DELETE</button>
+                                    <strong style="color: #fff; font-size:1.1rem;">${p.title}${badge}</strong>
+                                    <small style="color: ${color}; display:block;">Host: ${p.host}</small>
+                                    <div style="margin-top:8px;">
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer;">EDIT</button>
                                     </div>
                                 </div>
                             </div>
@@ -244,12 +242,12 @@
                 });
             } catch (err) { console.error(err); }
         }
+
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
-            const dateVal = document.getElementById('fDate').value; // 2026-03-14
+            const dateVal = document.getElementById('fDate').value;
             if (!editor || !dateVal) return alert("Fill in name and date!");
 
-            // TRANSLATOR: 2026-03-14 -> 14-Mar
             const d = new Date(dateVal + "T12:00:00");
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const sheetDate = d.getDate() + "-" + months[d.getMonth()];
@@ -269,10 +267,9 @@
                 editedBy: editor
             };
 
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                setTimeout(() => location.reload(), 1500);
-            } catch (err) { alert("Error"); btn.disabled = false; }
+            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+            .then(() => setTimeout(() => location.reload(), 1500))
+            .catch(() => { alert("Error saving!"); btn.disabled = false; btn.innerText = "POST PARTY"; });
         }
 
         function openEdit(id, title, host, link, category, date, time, endTime) {
@@ -282,25 +279,19 @@
             document.getElementById('fLink').value = link;
             document.getElementById('fCategory').value = category;
             document.getElementById('fTime').value = time;
-            document.getElementById('fEndTime').value = endTime || ""; // NEW
-            // Translate back for the date picker: 14-Mar -> 2026-03-14
+            document.getElementById('fEndTime').value = endTime || "";
+            
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const p = date.split('-');
-            const m = (months.indexOf(p[1]) + 1).toString().padStart(2, '0');
-            document.getElementById('fDate').value = `2026-${m}-${p[0].padStart(2, '0')}`;
-
+            if (date && date.includes("-")) {
+                const p = date.split('-');
+                const m = (months.indexOf(p[1]) + 1).toString().padStart(2, '0');
+                document.getElementById('fDate').value = `2026-${m}-${p[0].padStart(2, '0')}`;
+            }
             document.getElementById('modalSubmitBtn').innerText = "CONFIRM EDIT";
             document.getElementById('modalOverlay').style.display = 'flex';
         }
 
-        async function deleteParty(id) {
-            const n = prompt("Your name:"); if(!n) return;
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", submissionID: id, editedBy: n }) });
-            location.reload();
-        }
-
         loadParties();
     </script>
-
 </body>
 </html>
