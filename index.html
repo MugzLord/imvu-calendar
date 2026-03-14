@@ -183,7 +183,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
         
-                // 1. SORTING: Chronological order
+                // SORTING: Chronological order
                 data.sort((a, b) => {
                     const dateA = new Date(a.date + "-2026 " + a.time);
                     const dateB = new Date(b.date + "-2026 " + b.time);
@@ -194,17 +194,7 @@
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // 2. GET CURRENT PT DATE & TIME
                 const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                
-                // Create "14-Mar" format
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
-                
-                // Create "10 AM" format
-                const currentHour = ptNow.getHours();
-                const displayHour = currentHour % 12 || 12;
-                const ampm = currentHour >= 12 ? 'PM' : 'AM';
         
                 data.forEach(p => {
                     const isOfficial = (p.category === 'Official' || p.category === 'Official IMVU Event');
@@ -212,29 +202,31 @@
                     const themeBg = isOfficial ? 'rgba(241, 196, 15, 0.1)' : 'rgba(0, 212, 255, 0.1)';
                     const btnColor = isOfficial ? '#8e44ad' : '#2980b9';
         
-                    // 3. STRICT LIVE CHECK: Date MUST match AND Time MUST match
-                    const dateMatches = (p.date === todayStr);
-                    const timeMatches = p.time.startsWith(displayHour + ":") && p.time.includes(ampm);
-                    
-                    const isLive = dateMatches && timeMatches;
+                    // --- UPDATED LIVE LOGIC (Stays live until End Time) ---
+                    const startTime = new Date(p.date + "-2026 " + p.time);
+                    const endTime = new Date(p.date + "-2026 " + p.endTime);
+                    const isLive = (ptNow >= startTime && ptNow <= endTime);
                     const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
         
                     let joinBtn = p.link && p.link.trim() !== "" 
                         ? `<a href="${p.link}" target="_blank" class="btn-join" style="background:${btnColor}">JOIN</a>`
-                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5; cursor:not-allowed;">NO LINK</button>`;
+                        : `<button class="btn-join" disabled style="background:#333; opacity:0.5;">NO LINK</button>`;
+        
+                    // --- DISPLAY FIX: Showing Start Time - End Time ---
+                    const displayTime = p.endTime ? `${p.time} - ${p.endTime}` : p.time;
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}">
                             <div class="party-info">
-                                <div style="background:${themeBg}; padding:10px; border-radius:10px; border: 1px solid ${themeColor}; min-width:90px; text-align:center;">
-                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.8rem;">${p.time}</div>
+                                <div style="background:${themeBg}; padding:10px; border-radius:10px; border: 1px solid ${themeColor}; min-width:110px; text-align:center;">
+                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.75rem;">${displayTime}</div>
                                     <div style="color:#fff; font-weight:900; font-size:1.1rem;">${p.date}</div>
                                 </div>
                                 <div>
                                     <strong style="color: #fff; font-size:1.1rem;">${p.title} ${liveBadge}</strong>
                                     <small style="color: ${themeColor}; display:block;">Host: ${p.host}</small>
                                     <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
+                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">EDIT</button>
                                         <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.6rem; padding:2px 6px; cursor:pointer; border-radius:4px;">DELETE</button>
                                     </div>
                                 </div>
@@ -245,7 +237,7 @@
                 });
             } catch (err) { console.error(err); }
         }
-              
+                      
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value; // 2026-03-14
