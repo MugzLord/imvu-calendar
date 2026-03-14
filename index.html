@@ -93,7 +93,7 @@
     </div></div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbz5mXHGoEvxM9fq6Jp8Obwg2rHfvYHPlShJ_EvmbYaveoDSAGpfW3ZKp2hMzEvKdfQ_MA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwQmcOYVKlpCW_OTvvadmS3D1izb7Ad_XTgeUPLDcnVUmrlNg8J0z-75_04eKFf_kixGQ/exec';
 
         function updateClock() {
             const ptTime = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
@@ -117,65 +117,47 @@
             try {
                 const response = await fetch(API_URL);
                 let data = await response.json();
-        
-                // 1. SORTING: Chronological
+                
+                // Sort by Date
                 data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
         
                 const offDiv = document.getElementById('officialList');
                 const comDiv = document.getElementById('communityList');
                 offDiv.innerHTML = ""; comDiv.innerHTML = "";
         
-                // 2. GET CURRENT PT INFO
-                const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
-        
                 data.forEach(p => {
                     const isOfficial = p.category.includes('Official');
                     const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
-                    
-                    // --- RESTORED LIVE LOGIC ---
-                    // Create actual Date objects to compare the time range
-                    const startFull = new Date(p.date + "-2026 " + p.time);
-                    // If no end time, assume 1 hour duration for the badge
-                    const endFull = (p.endTime && p.endTime !== "undefined" && p.endTime.trim() !== "") 
-                                    ? new Date(p.date + "-2026 " + p.endTime) 
-                                    : new Date(startFull.getTime() + 3600000);
-                    
-                    const isToday = (p.date === todayStr);
-                    const isWithinTime = (ptNow >= startFull && ptNow <= endFull);
-                    const liveBadge = (isToday && isWithinTime) ? `<span class="live-badge">LIVE</span>` : "";
-                    
-                    // --- RESTORED END TIME (ETD) DISPLAY ---
-                    const displayTime = (p.endTime && String(p.endTime) !== "undefined" && String(p.endTime).trim() !== "") 
-                                        ? `${p.time} - ${p.endTime}` 
-                                        : p.time;
         
-                    // --- JOIN BUTTON LOGIC ---
+                    // 1. TIME DISPLAY (Checks Column G)
+                    const hasEnd = (p.endTime && String(p.endTime).trim() !== "" && String(p.endTime) !== "undefined");
+                    const timeRange = hasEnd ? `${p.time} - ${p.endTime}` : p.time;
+        
+                    // 2. LINK VALIDATION (Checks Column H)
+                    // We only enable if it starts with "http" to prevent IDs from becoming buttons
+                    const rawLink = String(p.link || "").trim();
+                    const isRealLink = rawLink.startsWith("http");
+        
                     let joinBtnHTML = "";
-                    if (p.link && String(p.link).length > 5 && String(p.link) !== "undefined") {
-                        joinBtnHTML = `<a href="${p.link.trim()}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:block; text-decoration:none;">JOIN</a>`;
+                    if (isRealLink) {
+                        joinBtnHTML = `<a href="${rawLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:block; text-decoration:none; color:white;">JOIN</a>`;
                     } else {
-                        joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#666 !important; opacity:0.5; cursor:not-allowed; border:1px solid #444; display:block;">NO LINK</button>`;
+                        joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#666 !important; opacity:0.5; cursor:not-allowed; border:1px solid #444; display:block; width:100%;">NO LINK</button>`;
                     }
         
                     const card = `
                         <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:12px; border-radius:15px; background:#1a1a1a; border-left:5px solid ${themeColor}; gap:10px;">
                             <div style="display:flex; align-items:center; gap:15px; flex:1; min-width:0;">
                                 <div style="border:1px solid ${themeColor}; padding:8px; border-radius:10px; min-width:110px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
-                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.65rem;">${displayTime}</div>
+                                    <div style="color:${themeColor}; font-weight:bold; font-size:0.65rem;">${timeRange}</div>
                                     <div style="color:#fff; font-weight:bold; font-size:0.9rem;">${p.date}</div>
                                 </div>
                                 <div style="min-width:0; flex:1;">
-                                    <strong style="color:#fff; font-size:1.1rem; display:block;">${p.title}${liveBadge}</strong>
+                                    <strong style="color:#fff; font-size:1rem; display:block; overflow:hidden; text-overflow:ellipsis;">${p.title}</strong>
                                     <div style="color:${themeColor}; font-size:0.75rem;">Host: ${p.host}</div>
-                                    <div style="margin-top:8px; display:flex; gap:5px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">EDIT</button>
-                                        <button onclick="deleteParty('${p.submissionID}')" style="background:none; border:1px solid #444; color:#666; font-size:0.55rem; padding:2px 5px; cursor:pointer; border-radius:4px;">DELETE</button>
-                                    </div>
                                 </div>
                             </div>
-                            <div style="flex-shrink:0; min-width:120px; text-align:right;">
+                            <div style="flex-shrink:0; min-width:110px; text-align:right;">
                                 ${joinBtnHTML}
                             </div>
                         </div>`;
