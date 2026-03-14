@@ -140,8 +140,10 @@
                     const displayTime = (p.endTime && p.endTime !== "undefined" && p.endTime.trim() !== "") ? `${p.time} - ${p.endTime}` : p.time;
         
                     // --- THE STRICTOR LINK CHECK ---
-                    const rawLink = String(p.link).trim();
-                    const hasValidLink = rawLink !== "" && rawLink !== "undefined" && rawLink !== "null" && rawLink.startsWith("http");
+                    const rawLink = String(p.link || "").trim();
+                    
+                    // This version is safer: if it's not empty and doesn't say "undefined", it counts as a link
+                    const hasValidLink = rawLink !== "" && rawLink !== "undefined" && rawLink !== "null";
         
                     let joinBtn = hasValidLink 
                         ? `<a href="${rawLink}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'}; display:inline-block;">JOIN</a>`
