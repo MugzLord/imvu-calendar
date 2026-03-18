@@ -107,7 +107,6 @@
     </div></div>
 
     <script>
-        // UPDATED API URL FROM YOUR PREVIOUS CODE
         const API_URL = 'https://script.google.com/macros/s/AKfycbwQmcOYVKlpCW_OTvvadmS3D1izb7Ad_XTgeUPLDcnVUmrlNg8J0z-75_04eKFf_kixGQ/exec';
 
         function updateClock() {
@@ -133,7 +132,7 @@
                 const response = await fetch(API_URL);
                 let data = await response.json();
                 
-                // 1. Correct sorting
+                // Keep your original sorting
                 data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
 
                 const offDiv = document.getElementById('officialList');
@@ -144,14 +143,30 @@
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
 
-                data.forEach(p => {
-                    const isOfficial = p.category.includes('Official');
-                    const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
-                    
+                // Using the 'for...of' loop to allow the 'continue' skip logic
+                for (const p of data) {
                     const startFull = new Date(p.date + "-2026 " + p.time);
                     const hasEnd = (p.endTime && String(p.endTime).trim() !== "" && String(p.endTime) !== "undefined");
                     const endFull = hasEnd ? new Date(p.date + "-2026 " + p.endTime) : new Date(startFull.getTime() + 3600000);
                     
+                    // --- 24-HOUR AUTO-DELETE CHECK ---
+                    const ageInMs = ptNow - endFull;
+                    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+                    if (ageInMs > twentyFourHours) {
+                        // This triggers your existing delete action in the background
+                        fetch(API_URL, { 
+                            method: 'POST', 
+                            mode: 'no-cors', 
+                            body: JSON.stringify({ action: "delete", submissionID: p.submissionID, editedBy: "AUTO_CLEANUP" }) 
+                        });
+                        continue; // Skip rendering this specific party and move to the next
+                    }
+                    // ---------------------------------
+
+                    // EVERYTHING BELOW IS YOUR ORIGINAL CODE UNTOUCHED
+                    const isOfficial = p.category.includes('Official');
+                    const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
                     const isToday = (p.date === todayStr);
                     const isLive = (isToday && ptNow >= startFull && ptNow <= endFull);
                     const isPast = (ptNow > endFull);
@@ -194,7 +209,7 @@
                             </div>
                         </div>`;
                     if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
-                });
+                }
             } catch (err) { console.error(err); }
         }
 
