@@ -62,7 +62,7 @@
             <h2 style="margin:0; font-size: 1.2rem; font-weight: 900;">IMVU PARTY GUIDE</h2>
             <div style="text-align: right;">
                 <div class="clock" id="ptClock">--:-- PT</div>
-                <button class="btn-submit" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSctHRAv0mdyL8_gwnB0AIOvVDWtZzwA5UYYo_h_rZ48LBnkNQ/viewform')">+ SUBMIT</button>
+                <button class="btn-submit" onclick="toggleModal()">+ SUBMIT</button>
             </div>
         </div>
     </header>
@@ -79,17 +79,31 @@
     <!-- SUBMISSION MODAL -->
     <div id="modalOverlay" class="modal">
         <div class="modal-content">
-            <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0; font-weight: 900; text-transform: uppercase;">Submit Party</h2>
-            <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Submissions have been moved to the official request form.</p>
-            <button class="btn-submit" style="width:100%; padding: 15px;" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSctHRAv0mdyL8_gwnB0AIOvVDWtZzwA5UYYo_h_rZ48LBnkNQ/viewform')">GO TO FORM</button>
-            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; font-weight: bold; cursor: pointer;">CANCEL</button>
+            <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0;">Submit Party</h2>
+            <select id="fCategory"><option value="Community">Community Party</option><option value="Official">Official IMVU Event</option></select>
+            <input type="text" id="fTitle" placeholder="Party Title">
+            <input type="text" id="fHost" placeholder="Host/s">
+            <input type="text" id="fCoHost" placeholder="Co-Host/s (Optional)">
+            <input type="date" id="fDate">
+            <select id="fTime">
+                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+            </select>
+            <select id="fEndTime"><option value="">No End Time</option>
+                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+            </select>
+            <input type="text" id="fLink" placeholder="Room Link">
+            <input type="text" id="fEditor" placeholder="Your Name">
+            <button class="btn-submit" id="modalSubmitBtn" style="width:100%; padding:14px; font-size:1rem;" onclick="submitParty()">POST PARTY</button>
+            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; cursor:pointer; font-weight:bold;">Cancel</button>
         </div>
     </div>
 
     <!-- FIREBASE SDKS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // =====================================================
@@ -139,6 +153,49 @@
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
+        window.submitParty = async function() {
+            const editor = document.getElementById('fEditor').value;
+            const dateVal = document.getElementById('fDate').value; 
+            if (!editor || !dateVal) return alert("Please fill in Your Name and the Date!");
+
+            document.getElementById('modalSubmitBtn').innerText = "SAVING...";
+
+            const payload = {
+                title: document.getElementById('fTitle').value,
+                hostName: document.getElementById('fHost').value,
+                coHosts: document.getElementById('fCoHost').value,
+                date: dateVal, 
+                time: document.getElementById('fTime').value,
+                endTime: document.getElementById('fEndTime').value,
+                link: document.getElementById('fLink').value,
+                category: document.getElementById('fCategory').value,
+                editedBy: editor,
+                status: "pending", // Saves as pending so it hides from public and shows in Hub
+                pushedToPublic: false,
+                id: Date.now().toString()
+            };
+
+            try {
+                // Save it directly to your Firebase parties collection!
+                await setDoc(doc(db, FIREBASE_COLLECTION_PATH, payload.id), payload);
+                alert("Request Sent! It will appear once approved by an Admin.");
+                toggleModal();
+                document.getElementById('modalSubmitBtn').innerText = "POST PARTY";
+                
+                // Clear out the form inputs for the next time
+                document.getElementById('fTitle').value = '';
+                document.getElementById('fHost').value = '';
+                document.getElementById('fCoHost').value = '';
+                document.getElementById('fDate').value = '';
+                document.getElementById('fLink').value = '';
+                document.getElementById('fEditor').value = '';
+            } catch (e) {
+                console.error(e);
+                alert("Error saving request. Please try again.");
+                document.getElementById('modalSubmitBtn').innerText = "POST PARTY";
+            }
+        };
+
         function format12h(timeStr) {
             if (!timeStr) return "TBA";
             if (timeStr.includes("AM") || timeStr.includes("PM")) return timeStr;
@@ -174,13 +231,19 @@
                 const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true");
                 const isApproved = p.status === 'approved';
                 
+                // GLOBAL SECURITY LOCK: If it is not explicitly pushed to public AND approved, hide it entirely.
+                if (!isPushed || !isApproved) {
+                    return false;
+                }
+
+                const isCommunity = p.category === 'Community' || p.category === 'community' || p['Category (Official / Community)'] === 'Community';
+                
                 if (currentTab === 'Official') {
-                    // OFFICIAL TAB: Only show parties specifically approved AND pushed from the Vercel Hub
-                    return isPushed && isApproved;
+                    // Show officially pushed parties that are NOT marked as community
+                    return !isCommunity;
                 } else {
-                    // COMMUNITY TAB FIX: Strictly require the category to be "Community"
-                    // This prevents unpushed Hub parties from leaking into this tab
-                    return p.category === 'Community' || p.category === 'community';
+                    // Show officially pushed parties that ARE marked as community
+                    return isCommunity;
                 }
             });
 
