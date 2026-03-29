@@ -5,131 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMVU Party Guide</title>
     <style>
-        :root { 
-            --vui-gold: #f1c40f; 
-            --vui-purple: #8e44ad; 
-            --community-blue: #00d4ff; 
-            --bg-dark: #0f0f0f; 
-            --card-bg: #1a1a1a; 
-        }
-        body { 
-            background-color: var(--bg-dark); 
-            color: #e0e0e0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 10px; 
-            text-align: left;
-        }
+        :root { --vui-gold: #f1c40f; --vui-purple: #8e44ad; --community-blue: #00d4ff; --bg-dark: #0f0f0f; --card-bg: #1a1a1a; }
+        body { background-color: var(--bg-dark); color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 10px; text-align: left; }
         
         header { 
-            position: relative; 
-            height: 140px; 
-            display: flex; 
-            align-items: flex-end; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            margin-bottom: 15px; 
-            background: #000; 
+            position: relative; height: 140px; display: flex; align-items: flex-end; 
+            border-radius: 15px; overflow: hidden; margin-bottom: 15px; background: #000; 
             border: 1px solid rgba(255,255,255,0.05);
         }
-        .header-bg { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/main/Party%20Banner.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-            opacity: 0.6; 
-        }
-        .header-overlay { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); 
-        }
-        .header-content { 
-            position: relative; 
-            width: 100%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 15px 10px; 
-            z-index: 3; 
-        }
+        .header-bg { position: absolute; width: 100%; height: 100%; background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/main/Party%20Banner.jpg'); background-size: cover; background-position: center; opacity: 0.6; }
+        .header-overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); }
+        .header-content { position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px 10px; z-index: 3; }
         
         .clock { color: var(--community-blue); font-weight: bold; font-size: 1.1rem; }
-        .btn-submit { 
-            background: var(--vui-gold); 
-            color: black; 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 0.9rem; 
-            text-transform: uppercase;
-        }
+        .btn-submit { background: var(--vui-gold); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; }
 
         .category-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
-        .tab-btn { 
-            flex: 1; 
-            background: #1a1a1a; 
-            color: #888; 
-            border: 1px solid #333; 
-            padding: 12px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
+        .tab-btn { flex: 1; background: #1a1a1a; color: #888; border: 1px solid #333; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; transition: all 0.2s; }
         .tab-btn.active.gold-tab { color: var(--vui-gold); border-color: var(--vui-gold); background: rgba(241, 196, 15, 0.1); }
         .tab-btn.active.blue-tab { color: var(--community-blue); border-color: var(--community-blue); background: rgba(0, 212, 255, 0.1); }
 
         .party-card { 
-            background: var(--card-bg); 
-            padding: 12px; 
-            border-radius: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-left: 5px solid #444; 
-            margin-bottom: 8px;
-            gap: 10px;
-            text-align: left;
+            background: var(--card-bg); padding: 12px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-left: 5px solid #444; margin-bottom: 8px; gap: 10px; text-align: left;
         }
         .official-card { border-left-color: var(--vui-gold); }
         .community-card { border-left-color: var(--community-blue); }
 
         .live-badge {
-            background: #ff0000 !important;
-            color: white !important;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 5px;
-            font-weight: bold;
-            display: inline-block !important;
-            animation: blinker 1s linear infinite;
-            vertical-align: middle;
+            background: #ff0000 !important; color: white !important; font-size: 0.6rem;
+            padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-weight: bold;
+            display: inline-block !important; animation: blinker 1s linear infinite; vertical-align: middle;
         }
         
         @keyframes blinker { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         .btn-join { 
-            width: 85px !important; 
-            min-width: 85px !important;
-            text-align: center; 
-            color: white; 
-            border: none; 
-            padding: 10px 5px; 
-            border-radius: 8px; 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 0.8rem;
-            flex-shrink: 0;
-            display: inline-block;
+            width: 85px !important; min-width: 85px !important; text-align: center; color: white; 
+            border: none; padding: 10px 5px; border-radius: 8px; text-decoration: none; 
+            font-weight: bold; font-size: 0.8rem; flex-shrink: 0; display: inline-block;
         }
 
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
@@ -147,7 +62,7 @@
             <h2 style="margin:0; font-size: 1.2rem; font-weight: 900;">IMVU PARTY GUIDE</h2>
             <div style="text-align: right;">
                 <div class="clock" id="ptClock">--:-- PT</div>
-                <button class="btn-submit" onclick="toggleModal()">+ SUBMIT</button>
+                <button class="btn-submit" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSctHRAv0mdyL8_gwnB0AIOvVDWtZzwA5UYYo_h_rZ48LBnkNQ/viewform')">+ SUBMIT</button>
             </div>
         </div>
     </header>
@@ -158,83 +73,83 @@
     </div>
 
     <div id="listContainer">
-        <div class="empty-msg">Syncing Satellite...</div>
+        <div class="empty-msg">Syncing Database...</div>
     </div>
 
     <!-- SUBMISSION MODAL -->
     <div id="modalOverlay" class="modal">
         <div class="modal-content">
             <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0; font-weight: 900; text-transform: uppercase;">Submit Party</h2>
-            <select id="fCategory">
-                <option value="Community">Community Party</option>
-                <option value="Official">Official IMVU Event</option>
-            </select>
-            <input type="text" id="fTitle" placeholder="Party Title">
-            <input type="text" id="fHost" placeholder="Host/s">
-            <input type="date" id="fDate" style="cursor: pointer;">
-            <select id="fTime">
-                <option value="00:00">12:00 AM</option><option value="01:00">1:00 AM</option><option value="02:00">2:00 AM</option>
-                <option value="03:00">3:00 AM</option><option value="04:00">4:00 AM</option><option value="05:00">5:00 AM</option>
-                <option value="06:00">6:00 AM</option><option value="07:00">7:00 AM</option><option value="08:00">8:00 AM</option>
-                <option value="09:00">9:00 AM</option><option value="10:00">10:00 AM</option><option value="11:00">11:00 AM</option>
-                <option value="12:00">12:00 PM</option><option value="13:00">1:00 PM</option><option value="14:00">2:00 PM</option>
-                <option value="15:00">3:00 PM</option><option value="16:00">4:00 PM</option><option value="17:00">5:00 PM</option>
-                <option value="18:00">6:00 PM</option><option value="19:00">7:00 PM</option><option value="20:00">8:00 PM</option>
-                <option value="21:00">9:00 PM</option><option value="22:00">10:00 PM</option><option value="23:00">11:00 PM</option>
-            </select>
-            <input type="text" id="fLink" placeholder="Room Link">
-            <input type="text" id="fEditor" placeholder="Your Name">
-            <button class="btn-submit" id="modalSubmitBtn" style="width:100%; padding: 15px;" onclick="submitParty()">POST PARTY</button>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Submissions have been moved to the official request form.</p>
+            <button class="btn-submit" style="width:100%; padding: 15px;" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSctHRAv0mdyL8_gwnB0AIOvVDWtZzwA5UYYo_h_rZ48LBnkNQ/viewform')">GO TO FORM</button>
             <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; font-weight: bold; cursor: pointer;">CANCEL</button>
         </div>
     </div>
 
-    <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwQmcOYVKlpCW_OTvvadmS3D1izb7Ad_XTgeUPLDcnVUmrlNg8J0z-75_04eKFf_kixGQ/exec';
+    <!-- FIREBASE SDKS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // =====================================================
+        // SECURE FIREBASE CONFIGURATION (HIDDEN FROM GITHUB)
+        // Vite will safely inject these during the Railway build
+        // =====================================================
+        let firebaseConfig;
+        let isCanvasPreview = false;
+        try {
+            // Check for Canvas environment first, then fall back to Vite env variables
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                firebaseConfig = JSON.parse(__firebase_config);
+                isCanvasPreview = true;
+            } else {
+                firebaseConfig = {
+                    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+                    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+                    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+                    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+                    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+                    appId: import.meta.env.VITE_FIREBASE_APP_ID
+                };
+            }
+        } catch(e) {
+            console.error("Failed to load environment variables. Ensure Railway has your VITE_ keys set up.");
+        }
+        
+        // Dynamically choose path depending on if it is rendering in Canvas vs Railway
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const FIREBASE_COLLECTION_PATH = isCanvasPreview ? `artifacts/${appId}/public/data/parties` : 'parties';
+
         let currentTab = 'Official';
-        let allData = [];
+        let allParties = [];
 
         function updateClock() {
-            const ptTime = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
-            document.getElementById('ptClock').innerText = ptTime + ' PT';
+            const options = { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('ptClock').innerText = new Date().toLocaleTimeString('en-US', options) + ' PT';
         }
         setInterval(updateClock, 1000); updateClock();
 
-        function switchTab(cat) {
+        window.switchTab = function(cat) {
             currentTab = cat;
             document.getElementById('tabOfficial').classList.toggle('active', cat === 'Official');
             document.getElementById('tabCommunity').classList.toggle('active', cat === 'Community');
-            render();
+            renderParties();
         }
 
-        function toggleModal() {
-            const m = document.getElementById('modalOverlay');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        function format12h(timeStr) {
+            if (!timeStr) return "TBA";
+            if (timeStr.includes("AM") || timeStr.includes("PM")) return timeStr;
+            let [h, m] = timeStr.split(':').map(Number);
+            if (isNaN(h)) return timeStr;
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            return `${h}:${String(m).padStart(2, '0')} ${ampm}`;
         }
 
-        async function loadData() {
-            try {
-                const response = await fetch(API_URL);
-                const raw = await response.json();
-                allData = Array.isArray(raw) ? raw : [];
-                render();
-            } catch (err) {
-                console.error(err);
-                document.getElementById('listContainer').innerHTML = `<div class="empty-msg">Sync Error</div>`;
-            }
-        }
-
-        // Robust date parsing for cross-app data
         function getSortDate(dateStr, timeStr) {
             if (!dateStr) return new Date(0);
             let isoDate = dateStr;
-            // Support DD-MMM (28-Mar)
-            if (dateStr.includes('-') && isNaN(dateStr.split('-')[0])) {
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const [day, monthName] = dateStr.split('-');
-                const monthIdx = months.indexOf(monthName);
-                isoDate = `${new Date().getFullYear()}-${String(monthIdx + 1).padStart(2, '0')}-${day.padStart(2, '0')}`;
-            }
             
             let cleanTime = timeStr || '00:00';
             if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
@@ -247,48 +162,39 @@
             return new Date(`${isoDate}T${cleanTime}:00`);
         }
 
-        function format12h(t) {
-            if (!t) return 'TBA';
-            if (t.includes('AM') || t.includes('PM')) return t; 
-            let [h, m] = t.split(':').map(Number);
-            if (isNaN(h)) return t;
-            const am = h >= 12 ? 'PM' : 'AM';
-            return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${am}`;
-        }
-
-        function render() {
+        function renderParties() {
             const container = document.getElementById('listContainer');
             container.innerHTML = "";
-
+            
             const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
-            // Smart filtering logic to recognize Hub pushed items
-            const filtered = allData.filter(p => {
-                const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true" || p.pushedtoPublic === true || String(p.pushedtoPublic).toLowerCase() === "true");
-                const isOfficialCategory = (p.category && p.category.includes('Official')) || isPushed;
+            const filteredData = allParties.filter(p => {
+                const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true");
                 const isApproved = p.status === 'approved';
+                const isHubOfficial = isPushed && isApproved;
+                const isCommunityCat = p.category === 'Community';
                 
                 if (currentTab === 'Official') {
-                    // Match Hub data: items that are pushed AND approved
-                    return isPushed && isApproved;
+                    return isHubOfficial;
                 } else {
-                    // Match Public submissions: items not pushed and not in official category
-                    return !isPushed && !p.category?.includes('Official');
+                    return isCommunityCat || (!isHubOfficial && !p.category?.includes('Official'));
                 }
-            }).sort((a, b) => {
+            });
+
+            filteredData.sort((a, b) => {
                 const da = getSortDate(a.date, a.startTime || a.time);
                 const db = getSortDate(b.date, b.startTime || b.time);
                 return da - db;
             });
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-msg">No ${currentTab.toUpperCase()} Parties Listed</div>`;
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="empty-msg">NO ${currentTab.toUpperCase()} PARTIES LISTED</div>`;
                 return;
             }
 
-            filtered.forEach(p => {
+            filteredData.forEach(p => {
                 const title = p.theme || p.title || "Untitled Party";
-                const host = p.hostName || p.host || "Unknown";
+                const host = p.coHosts ? `${p.hostName || p.host} + ${p.coHosts}` : (p.hostName || p.host || "Unknown");
                 const time = p.startTime || p.time || "00:00";
                 const link = p.roomLink || p.link || "";
                 const duration = p.duration || 2;
@@ -296,18 +202,29 @@
                 const startFull = getSortDate(p.date, time);
                 const endFull = new Date(startFull.getTime() + (duration * 3600000));
                 
+                if ((ptNow - endFull) > 24 * 60 * 60 * 1000) return;
+
                 const isLive = (ptNow >= startFull && ptNow <= endFull);
                 const isPast = (ptNow > endFull);
                 const themeColor = currentTab === 'Official' ? '#f1c40f' : '#00d4ff';
 
                 const card = document.createElement('div');
                 card.className = `party-card ${currentTab === 'Official' ? 'official-card' : 'community-card'}`;
-                if (isPast) card.style.opacity = "0.4";
+                if (isPast) card.style.opacity = "0.5";
 
                 let displayDate = p.date;
                 if (p.date && p.date.includes('-') && p.date.length > 5) {
                     const parts = p.date.split('-');
-                    if (parts.length === 3) displayDate = `${parts[1]}/${parts[2]}`; // YYYY-MM-DD to MM/DD
+                    if (parts.length === 3) displayDate = `${parts[1]}/${parts[2]}`; 
+                }
+
+                let joinBtnHTML = "";
+                if (isPast) {
+                    joinBtnHTML = `<button class="btn-join" disabled style="background:#222 !important; color:#555 !important; border:1px solid #333;">ENDED</button>`;
+                } else if (!link) {
+                    joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#777 !important; opacity:0.5; border:1px solid #444;">NO LINK</button>`;
+                } else {
+                    joinBtnHTML = `<a href="${link}" target="_blank" class="btn-join" style="background:${currentTab === 'Official' ? '#8e44ad' : '#2980b9'};">JOIN</a>`;
                 }
 
                 card.innerHTML = `
@@ -324,45 +241,49 @@
                         </div>
                     </div>
                     <div style="flex-shrink:0;">
-                        ${isPast ? 
-                            '<button class="btn-join" disabled style="background:#222; color:#555;">ENDED</button>' : 
-                            (link ? `<a href="${link}" target="_blank" class="btn-join" style="background:${currentTab === 'Official' ? '#8e44ad' : '#2980b9'};">JOIN</a>` : 
-                                    `<button class="btn-join" disabled style="background:#333; color:#777;">NO LINK</button>`)
-                        }
+                        ${joinBtnHTML}
                     </div>
                 `;
                 container.appendChild(card);
             });
-        }
-
-        async function submitParty() {
-            const editor = document.getElementById('fEditor').value;
-            const dateVal = document.getElementById('fDate').value;
-            if (!editor || !dateVal) return alert("Please fill in Name and Date!");
-
-            document.getElementById('modalSubmitBtn').innerText = "SAVING...";
             
-            const payload = {
-                action: "add",
-                category: document.getElementById('fCategory').value,
-                title: document.getElementById('fTitle').value,
-                host: document.getElementById('fHost').value,
-                date: dateVal,
-                time: document.getElementById('fTime').value,
-                link: document.getElementById('fLink').value,
-                editedBy: editor,
-                status: "pending",
-                pushedToPublic: false
-            };
-
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
-            .then(() => {
-                alert("Submitted for review!");
-                location.reload();
-            });
+            if (container.innerHTML === "") {
+                 container.innerHTML = `<div class="empty-msg">NO ${currentTab.toUpperCase()} PARTIES LISTED</div>`;
+            }
         }
 
-        loadData();
+        async function initAuthAndData() {
+            if (!firebaseConfig || (!isCanvasPreview && !firebaseConfig.apiKey)) {
+                document.getElementById('listContainer').innerHTML = `<div class="empty-msg" style="color:#ef4444;">ERROR: Missing Firebase Keys. Check Railway Dashboard.</div>`;
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+
+                // Use custom token in Canvas to prevent permission errors, standard fallback for production
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                onSnapshot(collection(db, FIREBASE_COLLECTION_PATH), (snapshot) => {
+                    allParties = snapshot.docs.map(d => d.data());
+                    renderParties();
+                }, (error) => {
+                    console.error("Firebase Snapshot error:", error);
+                    document.getElementById('listContainer').innerHTML = `<div class="empty-msg" style="color:#ef4444;">Database Permission Denied</div>`;
+                });
+            } catch (err) {
+                console.error("Firebase Auth error:", err);
+                document.getElementById('listContainer').innerHTML = `<div class="empty-msg" style="color:#ef4444;">Failed to connect to Firebase.</div>`;
+            }
+        }
+
+        initAuthAndData();
     </script>
 </body>
 </html>
