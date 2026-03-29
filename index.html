@@ -95,7 +95,7 @@
             justify-content: space-between; 
             align-items: center; 
             border-left: 5px solid #444; 
-            margin-bottom: 8px; /* Tightened spacing */
+            margin-bottom: 8px;
             gap: 10px;
             text-align: left;
         }
@@ -136,7 +136,7 @@
         .modal-content { background:#1e1e1e; padding:20px; border-radius:15px; width:90%; max-width:360px; max-height: 85vh; overflow-y: auto; }
         .modal-content input, .modal-content select { width:100%; margin:8px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing: border-box; }
 
-        .empty-msg { text-align: center; padding: 40px; color: #555; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; }
+        .empty-msg { text-align: center; padding: 60px 20px; color: #444; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; }
     </style>
 </head>
 <body>
@@ -171,7 +171,7 @@
             </select>
             <input type="text" id="fTitle" placeholder="Party Title">
             <input type="text" id="fHost" placeholder="Host/s">
-            <input type="date" id="fDate">
+            <input type="date" id="fDate" style="cursor: pointer;">
             <select id="fTime">
                 <option value="00:00">12:00 AM</option><option value="01:00">1:00 AM</option><option value="02:00">2:00 AM</option>
                 <option value="03:00">3:00 AM</option><option value="04:00">4:00 AM</option><option value="05:00">5:00 AM</option>
@@ -216,7 +216,6 @@
             try {
                 const response = await fetch(API_URL);
                 const raw = await response.json();
-                // Ensure raw is array
                 allData = Array.isArray(raw) ? raw : [];
                 render();
             } catch (err) {
@@ -225,11 +224,11 @@
             }
         }
 
-        // Helper to handle date parsing for sorting
+        // Robust date parsing for cross-app data
         function getSortDate(dateStr, timeStr) {
             if (!dateStr) return new Date(0);
             let isoDate = dateStr;
-            // If it's DD-MMM format (e.g. 28-Mar)
+            // Support DD-MMM (28-Mar)
             if (dateStr.includes('-') && isNaN(dateStr.split('-')[0])) {
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const [day, monthName] = dateStr.split('-');
@@ -238,7 +237,6 @@
             }
             
             let cleanTime = timeStr || '00:00';
-            // Convert 12h to 24h for Date constructor if needed
             if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
                 let [time, modifier] = cleanTime.split(' ');
                 let [hours, minutes] = time.split(':');
@@ -264,17 +262,18 @@
 
             const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
-            // Filter logic: Handles Hub booleans and field names
+            // Smart filtering logic to recognize Hub pushed items
             const filtered = allData.filter(p => {
-                const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true");
-                const isOfficialCategory = p.category && p.category.includes('Official');
+                const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true" || p.pushedtoPublic === true || String(p.pushedtoPublic).toLowerCase() === "true");
+                const isOfficialCategory = (p.category && p.category.includes('Official')) || isPushed;
+                const isApproved = p.status === 'approved';
                 
                 if (currentTab === 'Official') {
-                    // Only show items pushed from Hub AND approved
-                    return isPushed && p.status === 'approved';
+                    // Match Hub data: items that are pushed AND approved
+                    return isPushed && isApproved;
                 } else {
-                    // Community tab shows everything not pushed/marked official
-                    return !isPushed && !isOfficialCategory;
+                    // Match Public submissions: items not pushed and not in official category
+                    return !isPushed && !p.category?.includes('Official');
                 }
             }).sort((a, b) => {
                 const da = getSortDate(a.date, a.startTime || a.time);
@@ -283,12 +282,11 @@
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-msg">No ${currentTab} parties listed</div>`;
+                container.innerHTML = `<div class="empty-msg">No ${currentTab.toUpperCase()} Parties Listed</div>`;
                 return;
             }
 
             filtered.forEach(p => {
-                // Map Hub fields vs Form fields
                 const title = p.theme || p.title || "Untitled Party";
                 const host = p.hostName || p.host || "Unknown";
                 const time = p.startTime || p.time || "00:00";
@@ -306,11 +304,10 @@
                 card.className = `party-card ${currentTab === 'Official' ? 'official-card' : 'community-card'}`;
                 if (isPast) card.style.opacity = "0.4";
 
-                // Robust Display Date
                 let displayDate = p.date;
                 if (p.date && p.date.includes('-') && p.date.length > 5) {
                     const parts = p.date.split('-');
-                    if (parts.length === 3) displayDate = `${parts[1]}/${parts[2]}`; // From YYYY-MM-DD to MM/DD
+                    if (parts.length === 3) displayDate = `${parts[1]}/${parts[2]}`; // YYYY-MM-DD to MM/DD
                 }
 
                 card.innerHTML = `
