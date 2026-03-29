@@ -80,7 +80,7 @@
             border-radius: 10px; 
             cursor: pointer; 
             font-weight: bold; 
-            text-transform: uppercase;
+            text-transform: uppercase; 
             font-size: 0.8rem;
             transition: all 0.2s;
         }
@@ -215,7 +215,9 @@
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
-                allData = await response.json();
+                const raw = await response.json();
+                // Ensure raw is array
+                allData = Array.isArray(raw) ? raw : [];
                 render();
             } catch (err) {
                 console.error(err);
@@ -223,24 +225,35 @@
             }
         }
 
-        // Fix: Ensure we can parse both date formats properly
+        // Helper to handle date parsing for sorting
         function getSortDate(dateStr, timeStr) {
             if (!dateStr) return new Date(0);
-            // Handle Hub format (YYYY-MM-DD) or Guide format (DD-MMM)
             let isoDate = dateStr;
+            // If it's DD-MMM format (e.g. 28-Mar)
             if (dateStr.includes('-') && isNaN(dateStr.split('-')[0])) {
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const [day, monthName] = dateStr.split('-');
                 const monthIdx = months.indexOf(monthName);
                 isoDate = `${new Date().getFullYear()}-${String(monthIdx + 1).padStart(2, '0')}-${day.padStart(2, '0')}`;
             }
-            return new Date(`${isoDate}T${timeStr || '00:00'}:00`);
+            
+            let cleanTime = timeStr || '00:00';
+            // Convert 12h to 24h for Date constructor if needed
+            if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
+                let [time, modifier] = cleanTime.split(' ');
+                let [hours, minutes] = time.split(':');
+                if (hours === '12') hours = '00';
+                if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
+                cleanTime = `${String(hours).padStart(2, '0')}:${minutes}`;
+            }
+            return new Date(`${isoDate}T${cleanTime}:00`);
         }
 
         function format12h(t) {
-            if (!t) return '';
-            if (t.includes('AM') || t.includes('PM')) return t; // Already formatted
+            if (!t) return 'TBA';
+            if (t.includes('AM') || t.includes('PM')) return t; 
             let [h, m] = t.split(':').map(Number);
+            if (isNaN(h)) return t;
             const am = h >= 12 ? 'PM' : 'AM';
             return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${am}`;
         }
@@ -250,20 +263,19 @@
             container.innerHTML = "";
 
             const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-            const todayStr = ptNow.getFullYear() + "-" + String(ptNow.getMonth()+1).padStart(2,'0') + "-" + String(ptNow.getDate()).padStart(2,'0');
 
-            // --- FIX: Correcting Field Names to match the Hub ---
+            // Filter logic: Handles Hub booleans and field names
             const filtered = allData.filter(p => {
-                // Check if it's an Official item from Hub
-                // Hub items use 'theme', 'hostName', 'pushedToPublic'
-                const isPushed = (p.pushedToPublic === true || p.pushedToPublic === "true");
+                const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true");
                 const isOfficialCategory = p.category && p.category.includes('Official');
                 
                 if (currentTab === 'Official') {
+                    // Only show items pushed from Hub AND approved
                     return isPushed && p.status === 'approved';
+                } else {
+                    // Community tab shows everything not pushed/marked official
+                    return !isPushed && !isOfficialCategory;
                 }
-                // Community tab shows anything not marked as official from the Hub
-                return !isOfficialCategory && !isPushed;
             }).sort((a, b) => {
                 const da = getSortDate(a.date, a.startTime || a.time);
                 const db = getSortDate(b.date, b.startTime || b.time);
@@ -276,11 +288,11 @@
             }
 
             filtered.forEach(p => {
-                // Use fallback fields in case names vary between Hub and community submissions
+                // Map Hub fields vs Form fields
                 const title = p.theme || p.title || "Untitled Party";
                 const host = p.hostName || p.host || "Unknown";
                 const time = p.startTime || p.time || "00:00";
-                const link = p.roomLink || p.link || "#";
+                const link = p.roomLink || p.link || "";
                 const duration = p.duration || 2;
 
                 const startFull = getSortDate(p.date, time);
@@ -294,11 +306,18 @@
                 card.className = `party-card ${currentTab === 'Official' ? 'official-card' : 'community-card'}`;
                 if (isPast) card.style.opacity = "0.4";
 
+                // Robust Display Date
+                let displayDate = p.date;
+                if (p.date && p.date.includes('-') && p.date.length > 5) {
+                    const parts = p.date.split('-');
+                    if (parts.length === 3) displayDate = `${parts[1]}/${parts[2]}`; // From YYYY-MM-DD to MM/DD
+                }
+
                 card.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
                         <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:6px; border-radius:10px; min-width:90px; text-align:center; background:rgba(255,255,255,0.02);">
                             <div style="color:${isPast ? '#666' : themeColor}; font-weight:bold; font-size:0.6rem; text-transform:uppercase;">${format12h(time)}</div>
-                            <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.85rem;">${p.date.split('-').slice(1).reverse().join('/')}</div>
+                            <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.85rem;">${displayDate}</div>
                         </div>
                         <div style="min-width:0; flex:1;">
                             <strong style="color:${isPast ? '#888' : '#fff'}; font-size:0.95rem; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
@@ -310,7 +329,8 @@
                     <div style="flex-shrink:0;">
                         ${isPast ? 
                             '<button class="btn-join" disabled style="background:#222; color:#555;">ENDED</button>' : 
-                            `<a href="${link}" target="_blank" class="btn-join" style="background:${currentTab === 'Official' ? '#8e44ad' : '#2980b9'};">JOIN</a>`
+                            (link ? `<a href="${link}" target="_blank" class="btn-join" style="background:${currentTab === 'Official' ? '#8e44ad' : '#2980b9'};">JOIN</a>` : 
+                                    `<button class="btn-join" disabled style="background:#333; color:#777;">NO LINK</button>`)
                         }
                     </div>
                 `;
