@@ -5,29 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMVU Party Guide</title>
     <style>
-        :root { --vui-gold: #f1c40f; --vui-purple: #8e44ad; --community-blue: #00d4ff; --bg-dark: #0f0f0f; --card-bg: #1a1a1a; }
-        body { background-color: var(--bg-dark); color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; }
+        :root { 
+            --vui-gold: #f1c40f; 
+            --vui-purple: #8e44ad; 
+            --community-blue: #00d4ff; 
+            --bg-dark: #0f0f0f; 
+            --card-bg: #1a1a1a; 
+        }
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e0e0e0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 10px; 
+            text-align: left;
+        }
         
         header { 
-            position: relative; height: 140px; display: flex; align-items: flex-end; 
-            border-radius: 15px; overflow: hidden; margin-bottom: 15px; background: #000; 
+            position: relative; 
+            height: 140px; 
+            display: flex; 
+            align-items: flex-end; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            margin-bottom: 15px; 
+            background: #000; 
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .header-bg { position: absolute; width: 100%; height: 100%; background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/32c2014e93cbc5c11070d47675f5ed643ba2b3eb/Party%20Banner.jpg'); background-size: cover; background-position: center; opacity: 0.6; }
-        .header-overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); }
-        .header-content { position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px 10px; z-index: 3; }
+        .header-bg { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            background-image: url('https://raw.githubusercontent.com/MugzLord/imvu-calendar/main/Party%20Banner.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            opacity: 0.6; 
+        }
+        .header-overlay { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); 
+        }
+        .header-content { 
+            position: relative; 
+            width: 100%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 15px 10px; 
+            z-index: 3; 
+        }
         
         .clock { color: var(--community-blue); font-weight: bold; font-size: 1.1rem; }
-        .btn-submit { background: var(--vui-gold); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .btn-submit { 
+            background: var(--vui-gold); 
+            color: black; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 0.9rem; 
+            text-transform: uppercase;
+        }
 
         .category-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; background: #1a1a1a; color: #888; border: 1px solid #333; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .tab-btn { 
+            flex: 1; 
+            background: #1a1a1a; 
+            color: #888; 
+            border: 1px solid #333; 
+            padding: 12px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
         .tab-btn.active.gold-tab { color: var(--vui-gold); border-color: var(--vui-gold); background: rgba(241, 196, 15, 0.1); }
         .tab-btn.active.blue-tab { color: var(--community-blue); border-color: var(--community-blue); background: rgba(0, 212, 255, 0.1); }
 
         .party-card { 
-            background: var(--card-bg); padding: 12px; border-radius: 15px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-left: 5px solid #444; margin-bottom: 12px; gap: 10px;
+            background: var(--card-bg); 
+            padding: 12px; 
+            border-radius: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-left: 5px solid #444; 
+            margin-bottom: 8px; /* Tightened spacing */
+            gap: 10px;
+            text-align: left;
         }
         .official-card { border-left-color: var(--vui-gold); }
         .community-card { border-left-color: var(--community-blue); }
@@ -45,32 +115,36 @@
             vertical-align: middle;
         }
         
-        @keyframes blinker {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
+        @keyframes blinker { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* FIXED BUTTON WIDTH FOR MOBILE */
         .btn-join { 
             width: 85px !important; 
             min-width: 85px !important;
-            text-align: center; color: white; 
-            border: none; padding: 10px 5px; border-radius: 8px; 
-            text-decoration: none; font-weight: bold; font-size: 0.8rem;
+            text-align: center; 
+            color: white; 
+            border: none; 
+            padding: 10px 5px; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 0.8rem;
             flex-shrink: 0;
+            display: inline-block;
         }
 
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
         .modal-content { background:#1e1e1e; padding:20px; border-radius:15px; width:90%; max-width:360px; max-height: 85vh; overflow-y: auto; }
         .modal-content input, .modal-content select { width:100%; margin:8px 0; padding:12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:8px; box-sizing: border-box; }
+
+        .empty-msg { text-align: center; padding: 40px; color: #555; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-bg"></div><div class="header-overlay"></div>
+        <div class="header-bg"></div>
+        <div class="header-overlay"></div>
         <div class="header-content">
-            <h2 style="margin:0; font-size: 1.2rem;">IMVU PARTY GUIDE</h2>
+            <h2 style="margin:0; font-size: 1.2rem; font-weight: 900;">IMVU PARTY GUIDE</h2>
             <div style="text-align: right;">
                 <div class="clock" id="ptClock">--:-- PT</div>
                 <button class="btn-submit" onclick="toggleModal()">+ SUBMIT</button>
@@ -83,31 +157,42 @@
         <button id="tabCommunity" class="tab-btn blue-tab" onclick="switchTab('Community')">Community 🎧</button>
     </div>
 
-    <div id="officialLane"><div id="officialList"></div></div>
-    <div id="communityLane" style="display:none;"><div id="communityList"></div></div>
+    <div id="listContainer">
+        <div class="empty-msg">Syncing Satellite...</div>
+    </div>
 
-    <div id="modalOverlay" class="modal"><div class="modal-content">
-        <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0;">Submit Party</h2>
-        <select id="fCategory"><option value="Official">Official IMVU Event</option><option value="Community">Community Party</option></select>
-        <input type="text" id="fTitle" placeholder="Party Title">
-        <input type="text" id="fHost" placeholder="Host/s">
-        <input type="date" id="fDate">
-        <select id="fTime">
-            <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
-            <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
-        </select>
-        <select id="fEndTime"><option value="">No End Time</option>
-            <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
-            <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
-        </select>
-        <input type="text" id="fLink" placeholder="Room Link">
-        <input type="text" id="fEditor" placeholder="Your Name">
-        <button class="btn-submit" id="modalSubmitBtn" style="width:100%;" onclick="submitParty()">POST PARTY</button>
-        <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px;">Cancel</button>
-    </div></div>
+    <!-- SUBMISSION MODAL -->
+    <div id="modalOverlay" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0; font-weight: 900; text-transform: uppercase;">Submit Party</h2>
+            <select id="fCategory">
+                <option value="Community">Community Party</option>
+                <option value="Official">Official IMVU Event</option>
+            </select>
+            <input type="text" id="fTitle" placeholder="Party Title">
+            <input type="text" id="fHost" placeholder="Host/s">
+            <input type="date" id="fDate">
+            <select id="fTime">
+                <option value="00:00">12:00 AM</option><option value="01:00">1:00 AM</option><option value="02:00">2:00 AM</option>
+                <option value="03:00">3:00 AM</option><option value="04:00">4:00 AM</option><option value="05:00">5:00 AM</option>
+                <option value="06:00">6:00 AM</option><option value="07:00">7:00 AM</option><option value="08:00">8:00 AM</option>
+                <option value="09:00">9:00 AM</option><option value="10:00">10:00 AM</option><option value="11:00">11:00 AM</option>
+                <option value="12:00">12:00 PM</option><option value="13:00">1:00 PM</option><option value="14:00">2:00 PM</option>
+                <option value="15:00">3:00 PM</option><option value="16:00">4:00 PM</option><option value="17:00">5:00 PM</option>
+                <option value="18:00">6:00 PM</option><option value="19:00">7:00 PM</option><option value="20:00">8:00 PM</option>
+                <option value="21:00">9:00 PM</option><option value="22:00">10:00 PM</option><option value="23:00">11:00 PM</option>
+            </select>
+            <input type="text" id="fLink" placeholder="Room Link">
+            <input type="text" id="fEditor" placeholder="Your Name">
+            <button class="btn-submit" id="modalSubmitBtn" style="width:100%; padding: 15px;" onclick="submitParty()">POST PARTY</button>
+            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; font-weight: bold; cursor: pointer;">CANCEL</button>
+        </div>
+    </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwQmcOYVKlpCW_OTvvadmS3D1izb7Ad_XTgeUPLDcnVUmrlNg8J0z-75_04eKFf_kixGQ/exec';
+        let currentTab = 'Official';
+        let allData = [];
 
         function updateClock() {
             const ptTime = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit' });
@@ -116,10 +201,10 @@
         setInterval(updateClock, 1000); updateClock();
 
         function switchTab(cat) {
-            document.getElementById('officialLane').style.display = (cat === 'Official') ? 'block' : 'none';
-            document.getElementById('communityLane').style.display = (cat === 'Community') ? 'block' : 'none';
+            currentTab = cat;
             document.getElementById('tabOfficial').classList.toggle('active', cat === 'Official');
             document.getElementById('tabCommunity').classList.toggle('active', cat === 'Community');
+            render();
         }
 
         function toggleModal() {
@@ -127,123 +212,140 @@
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        async function loadParties() {
+        async function loadData() {
             try {
                 const response = await fetch(API_URL);
-                let data = await response.json();
-                
-                // Keep your original sorting
-                data.sort((a, b) => new Date(a.date + "-2026 " + a.time) - new Date(b.date + "-2026 " + b.time));
+                allData = await response.json();
+                render();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('listContainer').innerHTML = `<div class="empty-msg">Sync Error</div>`;
+            }
+        }
 
-                const offDiv = document.getElementById('officialList');
-                const comDiv = document.getElementById('communityList');
-                offDiv.innerHTML = ""; comDiv.innerHTML = "";
-                
-                const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+        // Fix: Ensure we can parse both date formats properly
+        function getSortDate(dateStr, timeStr) {
+            if (!dateStr) return new Date(0);
+            // Handle Hub format (YYYY-MM-DD) or Guide format (DD-MMM)
+            let isoDate = dateStr;
+            if (dateStr.includes('-') && isNaN(dateStr.split('-')[0])) {
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const todayStr = ptNow.getDate() + "-" + months[ptNow.getMonth()];
+                const [day, monthName] = dateStr.split('-');
+                const monthIdx = months.indexOf(monthName);
+                isoDate = `${new Date().getFullYear()}-${String(monthIdx + 1).padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+            return new Date(`${isoDate}T${timeStr || '00:00'}:00`);
+        }
 
-                // Using the 'for...of' loop to allow the 'continue' skip logic
-                for (const p of data) {
-                    const startFull = new Date(p.date + "-2026 " + p.time);
-                    const hasEnd = (p.endTime && String(p.endTime).trim() !== "" && String(p.endTime) !== "undefined");
-                    const endFull = hasEnd ? new Date(p.date + "-2026 " + p.endTime) : new Date(startFull.getTime() + 3600000);
-                    
-                    // --- 24-HOUR AUTO-DELETE CHECK ---
-                    const ageInMs = ptNow - endFull;
-                    const twentyFourHours = 24 * 60 * 60 * 1000;
+        function format12h(t) {
+            if (!t) return '';
+            if (t.includes('AM') || t.includes('PM')) return t; // Already formatted
+            let [h, m] = t.split(':').map(Number);
+            const am = h >= 12 ? 'PM' : 'AM';
+            return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${am}`;
+        }
 
-                    if (ageInMs > twentyFourHours) {
-                        // This triggers your existing delete action in the background
-                        fetch(API_URL, { 
-                            method: 'POST', 
-                            mode: 'no-cors', 
-                            body: JSON.stringify({ action: "delete", submissionID: p.submissionID, editedBy: "AUTO_CLEANUP" }) 
-                        });
-                        continue; // Skip rendering this specific party and move to the next
-                    }
-                    // ---------------------------------
+        function render() {
+            const container = document.getElementById('listContainer');
+            container.innerHTML = "";
 
-                    // EVERYTHING BELOW IS YOUR ORIGINAL CODE UNTOUCHED
-                    const isOfficial = p.category.includes('Official');
-                    const themeColor = isOfficial ? '#f1c40f' : '#00d4ff';
-                    const isToday = (p.date === todayStr);
-                    const isLive = (isToday && ptNow >= startFull && ptNow <= endFull);
-                    const isPast = (ptNow > endFull);
+            const ptNow = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+            const todayStr = ptNow.getFullYear() + "-" + String(ptNow.getMonth()+1).padStart(2,'0') + "-" + String(ptNow.getDate()).padStart(2,'0');
 
-                    const timeDisplay = hasEnd ? `${p.time} - ${p.endTime}` : p.time;
-                    const liveBadge = isLive ? `<span class="live-badge">LIVE</span>` : "";
-                    
-                    const linkVal = String(p.link || "").trim();
-                    const hasValidLink = linkVal.startsWith("http");
-
-                    let joinBtnHTML = "";
-                    if (isPast) {
-                        joinBtnHTML = `<button class="btn-join" disabled style="background:#222 !important; color:#555 !important; border:1px solid #333;">ENDED</button>`;
-                    } else if (!hasValidLink) {
-                        joinBtnHTML = `<button class="btn-join" disabled style="background:#333 !important; color:#777 !important; opacity:0.5; border:1px solid #444;">NO LINK</button>`;
-                    } else {
-                        joinBtnHTML = `<a href="${linkVal}" target="_blank" class="btn-join" style="background:${isOfficial ? '#8e44ad' : '#2980b9'};">JOIN</a>`;
-                    }
-
-                    const card = `
-                        <div class="party-card ${isOfficial ? 'official-card' : 'community-card'}" style="opacity: ${isPast ? '0.6' : '1'};">
-                            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
-                                <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:6px; border-radius:10px; min-width:95px; text-align:center; background:rgba(255,255,255,0.02); flex-shrink:0;">
-                                    <div style="color:${isPast ? '#666' : themeColor}; font-weight:bold; font-size:0.6rem;">${timeDisplay}</div>
-                                    <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.85rem;">${p.date}</div>
-                                </div>
-                                
-                                <div style="min-width:0; flex:1;">
-                                    <strong style="color:${isPast ? '#888' : '#fff'}; font-size:0.95rem; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}${liveBadge}</strong>
-                                    <div style="color:${isPast ? '#666' : themeColor}; font-size:0.75rem; word-wrap: break-word;">Host: ${p.host}</div>
-                                    <div style="margin-top:6px; display:flex; gap:6px;">
-                                        <button onclick="openEdit('${p.submissionID}', '${p.title.replace(/'/g, "\\'")}', '${p.host.replace(/'/g, "\\'")}', '${p.link}', '${p.category}', '${p.date}', '${p.time}', '${p.endTime}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.55rem; padding:3px 6px; cursor:pointer; border-radius:4px; font-weight:bold;">EDIT</button>
-                                        <button onclick="deleteParty('${p.submissionID}')" style="background:#2a2a2a; border:1px solid #444; color:#aaa; font-size:0.55rem; padding:3px 6px; cursor:pointer; border-radius:4px; font-weight:bold;">DELETE</button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="flex-shrink:0;">
-                                ${joinBtnHTML}
-                            </div>
-                        </div>`;
-                    if (isOfficial) offDiv.innerHTML += card; else comDiv.innerHTML += card;
+            // --- FIX: Correcting Field Names to match the Hub ---
+            const filtered = allData.filter(p => {
+                // Check if it's an Official item from Hub
+                // Hub items use 'theme', 'hostName', 'pushedToPublic'
+                const isPushed = (p.pushedToPublic === true || p.pushedToPublic === "true");
+                const isOfficialCategory = p.category && p.category.includes('Official');
+                
+                if (currentTab === 'Official') {
+                    return isPushed && p.status === 'approved';
                 }
-            } catch (err) { console.error(err); }
+                // Community tab shows anything not marked as official from the Hub
+                return !isOfficialCategory && !isPushed;
+            }).sort((a, b) => {
+                const da = getSortDate(a.date, a.startTime || a.time);
+                const db = getSortDate(b.date, b.startTime || b.time);
+                return da - db;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-msg">No ${currentTab} parties listed</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                // Use fallback fields in case names vary between Hub and community submissions
+                const title = p.theme || p.title || "Untitled Party";
+                const host = p.hostName || p.host || "Unknown";
+                const time = p.startTime || p.time || "00:00";
+                const link = p.roomLink || p.link || "#";
+                const duration = p.duration || 2;
+
+                const startFull = getSortDate(p.date, time);
+                const endFull = new Date(startFull.getTime() + (duration * 3600000));
+                
+                const isLive = (ptNow >= startFull && ptNow <= endFull);
+                const isPast = (ptNow > endFull);
+                const themeColor = currentTab === 'Official' ? '#f1c40f' : '#00d4ff';
+
+                const card = document.createElement('div');
+                card.className = `party-card ${currentTab === 'Official' ? 'official-card' : 'community-card'}`;
+                if (isPast) card.style.opacity = "0.4";
+
+                card.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+                        <div style="border:1px solid ${isPast ? '#444' : themeColor}; padding:6px; border-radius:10px; min-width:90px; text-align:center; background:rgba(255,255,255,0.02);">
+                            <div style="color:${isPast ? '#666' : themeColor}; font-weight:bold; font-size:0.6rem; text-transform:uppercase;">${format12h(time)}</div>
+                            <div style="color:${isPast ? '#666' : '#fff'}; font-weight:bold; font-size:0.85rem;">${p.date.split('-').slice(1).reverse().join('/')}</div>
+                        </div>
+                        <div style="min-width:0; flex:1;">
+                            <strong style="color:${isPast ? '#888' : '#fff'}; font-size:0.95rem; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                ${title}${isLive ? '<span class="live-badge">LIVE</span>' : ''}
+                            </strong>
+                            <div style="color:${isPast ? '#666' : themeColor}; font-size:0.75rem;">Host: ${host}</div>
+                        </div>
+                    </div>
+                    <div style="flex-shrink:0;">
+                        ${isPast ? 
+                            '<button class="btn-join" disabled style="background:#222; color:#555;">ENDED</button>' : 
+                            `<a href="${link}" target="_blank" class="btn-join" style="background:${currentTab === 'Official' ? '#8e44ad' : '#2980b9'};">JOIN</a>`
+                        }
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         async function submitParty() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value;
-            if (!editor || !dateVal) return alert("Fill Name and Date!");
-            const d = new Date(dateVal + "T12:00:00");
-            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-            const sheetDate = d.getDate() + "-" + months[d.getMonth()];
+            if (!editor || !dateVal) return alert("Please fill in Name and Date!");
+
             document.getElementById('modalSubmitBtn').innerText = "SAVING...";
-            const payload = { category: document.getElementById('fCategory').value, title: document.getElementById('fTitle').value, host: document.getElementById('fHost').value, date: sheetDate, time: document.getElementById('fTime').value, endTime: document.getElementById('fEndTime').value, link: document.getElementById('fLink').value, submissionID: window.editingID || 'ID-' + Math.random().toString(36).substr(2, 9), editedBy: editor };
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(() => location.reload());
+            
+            const payload = {
+                action: "add",
+                category: document.getElementById('fCategory').value,
+                title: document.getElementById('fTitle').value,
+                host: document.getElementById('fHost').value,
+                date: dateVal,
+                time: document.getElementById('fTime').value,
+                link: document.getElementById('fLink').value,
+                editedBy: editor,
+                status: "pending",
+                pushedToPublic: false
+            };
+
+            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+            .then(() => {
+                alert("Submitted for review!");
+                location.reload();
+            });
         }
 
-        function openEdit(id, title, host, link, cat, date, time, end) {
-            window.editingID = id;
-            document.getElementById('fTitle').value = title; 
-            document.getElementById('fHost').value = host; 
-            document.getElementById('fLink').value = (link === "undefined") ? "" : link; 
-            document.getElementById('fCategory').value = cat; 
-            document.getElementById('fTime').value = time; 
-            document.getElementById('fEndTime').value = (end === "undefined") ? "" : end;
-            document.getElementById('modalSubmitBtn').innerText = "CONFIRM EDIT";
-            toggleModal();
-        }
-        
-        async function deleteParty(id) {
-            const n = prompt("Your name:"); if(!n) return;
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", submissionID: id, editedBy: n }) });
-            location.reload();
-        }
-
-        loadParties();
+        loadData();
     </script>
 </body>
 </html>
