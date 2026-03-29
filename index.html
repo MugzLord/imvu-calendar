@@ -79,24 +79,28 @@
     <!-- SUBMISSION MODAL -->
     <div id="modalOverlay" class="modal">
         <div class="modal-content">
-            <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0;">Submit Party</h2>
+            <h2 id="modalTitle" style="color:var(--vui-gold); margin-top:0; font-weight: 900; text-transform: uppercase;">Submit Party</h2>
             <select id="fCategory"><option value="Community">Community Party</option><option value="Official">Official IMVU Event</option></select>
             <input type="text" id="fTitle" placeholder="Party Title">
             <input type="text" id="fHost" placeholder="Host/s">
             <input type="text" id="fCoHost" placeholder="Co-Host/s (Optional)">
             <input type="date" id="fDate">
-            <select id="fTime">
-                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
-            </select>
-            <select id="fEndTime"><option value="">No End Time</option>
-                <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
-            </select>
+            <div style="display: flex; gap: 8px;">
+                <select id="fTime" style="flex: 1;">
+                    <option value="" disabled selected>Start Time</option>
+                    <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+                </select>
+                <select id="fEndTime" style="flex: 1;">
+                    <option value="">No End Time</option>
+                    <option value="12:00 AM">12:00 AM</option><option value="1:00 AM">1:00 AM</option><option value="2:00 AM">2:00 AM</option><option value="3:00 AM">3:00 AM</option><option value="4:00 AM">4:00 AM</option><option value="5:00 AM">5:00 AM</option><option value="6:00 AM">6:00 AM</option><option value="7:00 AM">7:00 AM</option><option value="8:00 AM">8:00 AM</option><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option><option value="7:00 PM">7:00 PM</option><option value="8:00 PM">8:00 PM</option><option value="9:00 PM">9:00 PM</option><option value="10:00 PM">10:00 PM</option><option value="11:00 PM">11:00 PM</option>
+                </select>
+            </div>
             <input type="text" id="fLink" placeholder="Room Link">
             <input type="text" id="fEditor" placeholder="Your Name">
-            <button class="btn-submit" id="modalSubmitBtn" style="width:100%; padding:14px; font-size:1rem;" onclick="submitParty()">POST PARTY</button>
-            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; cursor:pointer; font-weight:bold;">Cancel</button>
+            <button class="btn-submit" id="modalSubmitBtn" style="width:100%; padding: 15px; margin-top: 10px;" onclick="submitParty()">POST PARTY</button>
+            <button onclick="toggleModal()" style="background:none; color:#888; width:100%; border:none; margin-top:10px; font-weight: bold; cursor: pointer;">CANCEL</button>
         </div>
     </div>
 
@@ -132,6 +136,10 @@
         const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const FIREBASE_COLLECTION_PATH = isCanvasPreview ? `artifacts/${currentAppId}/public/data/parties` : 'parties';
 
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
         let currentTab = 'Official';
         let allParties = [];
 
@@ -153,45 +161,56 @@
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
+        // --- NEW SUBMISSION LOGIC ---
         window.submitParty = async function() {
             const editor = document.getElementById('fEditor').value;
             const dateVal = document.getElementById('fDate').value; 
-            if (!editor || !dateVal) return alert("Please fill in Your Name and the Date!");
+            const timeVal = document.getElementById('fTime').value;
+
+            if (!editor || !dateVal || !timeVal) {
+                return alert("Please fill in Your Name, Date, and Start Time!");
+            }
 
             document.getElementById('modalSubmitBtn').innerText = "SAVING...";
 
             const payload = {
                 title: document.getElementById('fTitle').value,
+                theme: document.getElementById('fTitle').value, // Duplicated for compatibility with Hub
                 hostName: document.getElementById('fHost').value,
                 coHosts: document.getElementById('fCoHost').value,
                 date: dateVal, 
-                time: document.getElementById('fTime').value,
+                time: timeVal,
+                startTime: timeVal, // Duplicated for compatibility with Hub
                 endTime: document.getElementById('fEndTime').value,
-                link: document.getElementById('fLink').value,
+                roomLink: document.getElementById('fLink').value,
                 category: document.getElementById('fCategory').value,
                 editedBy: editor,
-                status: "pending", // Saves as pending so it hides from public and shows in Hub
+                status: "pending", // ALWAYS PENDING - so it routes straight to Hub approval
                 pushedToPublic: false,
+                publicPushMode: 'auto',
+                isPublic: true,
                 id: Date.now().toString()
             };
 
             try {
-                // Save it directly to your Firebase parties collection!
+                // Submit directly to your Firebase collection
                 await setDoc(doc(db, FIREBASE_COLLECTION_PATH, payload.id), payload);
                 alert("Request Sent! It will appear once approved by an Admin.");
                 toggleModal();
-                document.getElementById('modalSubmitBtn').innerText = "POST PARTY";
                 
-                // Clear out the form inputs for the next time
+                // Clear the form fields
                 document.getElementById('fTitle').value = '';
                 document.getElementById('fHost').value = '';
                 document.getElementById('fCoHost').value = '';
                 document.getElementById('fDate').value = '';
+                document.getElementById('fTime').value = '';
+                document.getElementById('fEndTime').value = '';
                 document.getElementById('fLink').value = '';
                 document.getElementById('fEditor').value = '';
             } catch (e) {
                 console.error(e);
                 alert("Error saving request. Please try again.");
+            } finally {
                 document.getElementById('modalSubmitBtn').innerText = "POST PARTY";
             }
         };
@@ -231,18 +250,13 @@
                 const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true");
                 const isApproved = p.status === 'approved';
                 
-                // GLOBAL SECURITY LOCK: If it is not explicitly pushed to public AND approved, hide it entirely.
-                if (!isPushed || !isApproved) {
-                    return false;
-                }
+                if (!isPushed || !isApproved) return false;
 
                 const isCommunity = p.category === 'Community' || p.category === 'community' || p['Category (Official / Community)'] === 'Community';
                 
                 if (currentTab === 'Official') {
-                    // Show officially pushed parties that are NOT marked as community
                     return !isCommunity;
                 } else {
-                    // Show officially pushed parties that ARE marked as community
                     return isCommunity;
                 }
             });
@@ -325,10 +339,6 @@
             }
 
             try {
-                const app = initializeApp(firebaseConfig);
-                const db = getFirestore(app);
-                const auth = getAuth(app);
-
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
