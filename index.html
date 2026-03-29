@@ -94,12 +94,10 @@
 
         // =====================================================
         // SECURE FIREBASE CONFIGURATION (HIDDEN FROM GITHUB)
-        // Vite will safely inject these during the Railway build
         // =====================================================
         let firebaseConfig;
         let isCanvasPreview = false;
         try {
-            // Check for Canvas environment first, then fall back to Vite env variables
             if (typeof __firebase_config !== 'undefined' && __firebase_config) {
                 firebaseConfig = JSON.parse(__firebase_config);
                 isCanvasPreview = true;
@@ -114,12 +112,11 @@
                 };
             }
         } catch(e) {
-            console.error("Failed to load environment variables. Ensure Railway has your VITE_ keys set up.");
+            console.error("Failed to load environment variables.");
         }
         
-        // Dynamically choose path depending on if it is rendering in Canvas vs Railway
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const FIREBASE_COLLECTION_PATH = isCanvasPreview ? `artifacts/${appId}/public/data/parties` : 'parties';
+        const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const FIREBASE_COLLECTION_PATH = isCanvasPreview ? `artifacts/${currentAppId}/public/data/parties` : 'parties';
 
         let currentTab = 'Official';
         let allParties = [];
@@ -135,6 +132,11 @@
             document.getElementById('tabOfficial').classList.toggle('active', cat === 'Official');
             document.getElementById('tabCommunity').classList.toggle('active', cat === 'Community');
             renderParties();
+        }
+
+        window.toggleModal = function() {
+            const m = document.getElementById('modalOverlay');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
         function format12h(timeStr) {
@@ -171,13 +173,14 @@
             const filteredData = allParties.filter(p => {
                 const isPushed = (p.pushedToPublic === true || String(p.pushedToPublic).toLowerCase() === "true");
                 const isApproved = p.status === 'approved';
-                const isHubOfficial = isPushed && isApproved;
-                const isCommunityCat = p.category === 'Community';
                 
                 if (currentTab === 'Official') {
-                    return isHubOfficial;
+                    // OFFICIAL TAB: Only show parties specifically approved AND pushed from the Vercel Hub
+                    return isPushed && isApproved;
                 } else {
-                    return isCommunityCat || (!isHubOfficial && !p.category?.includes('Official'));
+                    // COMMUNITY TAB FIX: Strictly require the category to be "Community"
+                    // This prevents unpushed Hub parties from leaking into this tab
+                    return p.category === 'Community' || p.category === 'community';
                 }
             });
 
@@ -263,7 +266,6 @@
                 const db = getFirestore(app);
                 const auth = getAuth(app);
 
-                // Use custom token in Canvas to prevent permission errors, standard fallback for production
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
